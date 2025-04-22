@@ -1,0 +1,691 @@
+PROBLEM 11
+Okay, let's generate three similar problems that involve the concept of prime numbers and require writing or utilizing functions to work with them. Then, I will provide code solutions for each.
+
+**Original Code (for Reference):**
+
+```python
+def is_prime(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+```
+
+**Problem 1: Find the First N Prime Numbers**
+
+Write a function `find_first_n_primes(n)` that takes an integer `n` as input and returns a list containing the first `n` prime numbers.  Use the `is_prime` function to help determine if a number is prime.
+
+**Problem 2: Prime Factorization**
+
+Write a function `prime_factorization(n)` that takes an integer `n` greater than 1 as input and returns a list of its prime factors. The list should contain the prime factors in ascending order, and should contain each prime factor with the correct multiplicity (e.g., `prime_factorization(12)` should return `[2, 2, 3]`).  Use the `is_prime` function to check for primality.
+
+**Problem 3:  Prime Number Range**
+
+Write a function `prime_range(start, end)` that takes two integers, `start` and `end`, as input and returns a list containing all the prime numbers within the inclusive range of `start` to `end`. Use the `is_prime` function.  Handle the case where `start` is greater than `end` by returning an empty list.
+
+**Solutions:**
+
+```python
+# Original is_prime function (copied for completeness)
+def is_prime(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+
+
+# Solution for Problem 1: Find the First N Prime Numbers
+def find_first_n_primes(n):
+    primes = []
+    num = 2
+    while len(primes) < n:
+        if is_prime(num):
+            primes.append(num)
+        num += 1
+    return primes
+
+
+# Solution for Problem 2: Prime Factorization
+def prime_factorization(n):
+    factors = []
+    i = 2
+    while i * i <= n:  # Optimization: Only need to check up to the square root
+        while n % i == 0:
+            factors.append(i)
+            n //= i
+        i += 1
+    if n > 1:  # Remaining n is a prime factor (if any)
+        factors.append(n)
+    return factors
+
+
+# Solution for Problem 3: Prime Number Range
+def prime_range(start, end):
+    if start > end:
+        return []  # Handle invalid range
+    primes = []
+    for num in range(start, end + 1):
+        if is_prime(num):
+            primes.append(num)
+    return primes
+
+
+# Example Usage (Testing):
+print("First 5 primes:", find_first_n_primes(5))
+print("Prime factors of 12:", prime_factorization(12))
+print("Primes between 10 and 20:", prime_range(10, 20))
+print("Primes between 20 and 10:", prime_range(20, 10)) # empty list
+```
+
+**Explanation of Solutions:**
+
+*   **`find_first_n_primes(n)`:**  This function starts with `num = 2` and iteratively checks if each number is prime using the `is_prime()` function.  If it's prime, it adds it to the `primes` list. The loop continues until the `primes` list contains `n` elements.
+
+*   **`prime_factorization(n)`:** This function iteratively checks for prime factors starting from 2.  The key optimization is the `while i * i <= n` condition. We only need to check divisibility up to the square root of `n`.  If a number `i` is a factor, we repeatedly divide `n` by `i` and add `i` to the `factors` list until `i` is no longer a factor. After the loop, if `n` is still greater than 1, it means that the remaining `n` is itself a prime factor (for example, if you factor 14, after dividing by 2 you get 7, which is prime).
+
+*   **`prime_range(start, end)`:** This function simply iterates through the numbers in the given range (inclusive) and uses the `is_prime()` function to check if each number is prime. If it is, the number is added to the `primes` list. It includes an initial check to see if `start` is greater than `end` and returns an empty list if it is.
+
+These problems provide a good exercise in applying the concept of prime numbers and utilizing functions to perform more complex tasks. The solutions demonstrate efficient ways to find prime numbers, factorize integers, and work with ranges of numbers to identify primes.  The prime factorization solution includes an important optimization to improve its performance.
+PROBLEM 12
+Okay, here are 3 similar problems to the given code snippet (which calculates the factorial of a number *incorrectly*, by the way - I'll address that in the solutions) along with their solutions. The problems will focus on iterative calculations of mathematical sequences and functions.
+
+**Original Code (Incorrect Factorial):**
+
+```python
+def factorial ( n ) :
+    result = 1
+    for i in range (1 , n ) :
+        result *= i
+    return result
+```
+
+**Problem 1: Calculate the Sum of Squares of the first n natural numbers**
+
+Write a function `sum_of_squares(n)` that calculates the sum of the squares of the first `n` natural numbers (1, 2, 3, ..., n).  For example, if `n = 3`, the function should return `1*1 + 2*2 + 3*3 = 14`.
+
+**Solution to Problem 1:**
+
+```python
+def sum_of_squares(n):
+    result = 0
+    for i in range(1, n + 1):  # Iterate from 1 to n (inclusive)
+        result += i * i
+    return result
+
+# Example Usage:
+print(sum_of_squares(3))  # Output: 14
+print(sum_of_squares(5))  # Output: 55
+```
+
+**Problem 2: Calculate the nth Fibonacci Number (Iteratively)**
+
+Write a function `fibonacci(n)` that calculates the nth Fibonacci number iteratively. The Fibonacci sequence starts with 0 and 1, and each subsequent number is the sum of the previous two.  So the sequence is 0, 1, 1, 2, 3, 5, 8, 13, ...  `fibonacci(0)` should return 0, `fibonacci(1)` should return 1, `fibonacci(2)` should return 1, `fibonacci(3)` should return 2, and so on.
+
+**Solution to Problem 2:**
+
+```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    a = 0
+    b = 1
+    for _ in range(2, n + 1):
+        c = a + b
+        a = b
+        b = c
+    return b
+
+# Example Usage:
+print(fibonacci(0))  # Output: 0
+print(fibonacci(1))  # Output: 1
+print(fibonacci(5))  # Output: 5
+print(fibonacci(10)) # Output: 55
+```
+
+**Problem 3: Calculate the Geometric Progression Sum**
+
+Write a function `geometric_sum(a, r, n)` that calculates the sum of the first `n` terms of a geometric progression.  The geometric progression is defined as: a, ar, ar^2, ar^3, ..., ar^(n-1).  The sum of the first n terms is:  a + ar + ar^2 + ... + ar^(n-1).
+
+**Solution to Problem 3:**
+
+```python
+def geometric_sum(a, r, n):
+    result = 0
+    for i in range(n):
+        result += a * (r ** i)
+    return result
+
+# Example Usage:
+print(geometric_sum(2, 3, 4))  # Output: 80 (2 + 6 + 18 + 54)
+print(geometric_sum(1, 0.5, 5)) # Output: 1.9375 (1 + 0.5 + 0.25 + 0.125 + 0.0625)
+```
+
+**Corrections and Improvements to the Original Factorial Code and Solution:**
+
+The original `factorial` function is *incorrect*.  It misses multiplying by `n`. The correct implementation is:
+
+```python
+def factorial(n):
+    result = 1
+    for i in range(1, n + 1):  # Corrected loop: iterate up to and including n
+        result *= i
+    return result
+
+# or
+
+def factorial_alternative(n):
+  if n == 0:
+    return 1
+  result = 1
+  for i in range (1,n+1):
+    result*= i
+  return result
+```
+
+**Explanation of Corrections:**
+
+*   **`range(1, n + 1)`:** The `range()` function in Python creates a sequence of numbers that *excludes* the upper bound.  To include `n` in the multiplication, the loop must iterate up to `n + 1`.  The original code only calculated up to `(n-1)`.
+
+**Corrected Problem 0: Recalculate factorial with Corrected Code**
+
+Write a function `factorial(n)` that calculates the factorial of a number *n* correctly.
+
+```python
+def factorial(n):
+  if n == 0:
+    return 1
+  result = 1
+  for i in range (1,n+1):
+    result*= i
+  return result
+
+print(factorial(5)) #120
+```
+
+The solutions provided are iterative, similar to the original (flawed) factorial code.  They all involve using a loop to accumulate a result based on a mathematical sequence.  I've also included examples of how to use each function and the expected outputs. I have also corrected the flawed factorial code.
+PROBLEM 13
+Okay, let's craft three similar problems based on linked list node deletion and provide complete solutions.  The focus will be on deleting a node with a specific value (`key`) from a singly linked list.  We'll cover different edge cases and constraints in each problem.
+
+**Provided Code (Skeleton):**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    // TODO: Implement node deletion
+}
+```
+
+**Problem 1: Basic Deletion (Key Exists)**
+
+*   **Description:** Delete the first occurrence of a node with the value `key` from the linked list.  Assume that the `key` is guaranteed to exist in the linked list.  Handle the case where the `key` is the first node.
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    // If head node itself holds the key
+    if (curr != NULL && curr->data == key) {
+        *head = curr->next; // Changed head
+        free(curr);               // Free old head
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (curr != NULL && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // If key was not present in linked list (This will not happen with the assumed constraint)
+    if (curr == NULL) return;
+
+    // Unlink the node from linked list
+    prev->next = curr->next;
+
+    // Free memory
+    free(curr);
+}
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int main() {
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 3);
+
+    printf("Linked List after deleting 3: ");
+    printList(head);  // Output: 1 2 4
+
+    deleteNode(&head, 1);
+    printf("Linked List after deleting 1: ");
+    printList(head); // Output 2 4
+
+    return 0;
+}
+```
+
+**Problem 2: Deletion (Key Might Not Exist)**
+
+*   **Description:** Delete the first occurrence of a node with the value `key` from the linked list.  If the `key` is not found in the list, the function should do nothing (the list should remain unchanged).
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    // If head node itself holds the key
+    if (curr != NULL && curr->data == key) {
+        *head = curr->next;
+        free(curr);
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (curr != NULL && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // If key was not present in linked list
+    if (curr == NULL) return;
+
+    // Unlink the node from linked list
+    prev->next = curr->next;
+
+    // Free memory
+    free(curr);
+}
+
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+
+int main() {
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 5); // Key doesn't exist
+
+    printf("Linked List after trying to delete 5 (not found): ");
+    printList(head); // Output: 1 2 3 4 (no change)
+
+    deleteNode(&head, 3);
+
+    printf("Linked List after deleting 3: ");
+    printList(head); // Output: 1 2 4
+    return 0;
+}
+```
+
+**Problem 3: Delete All Occurrences (Multiple Nodes with the Same Key)**
+
+*   **Description:** Delete *all* occurrences of a node with the value `key` from the linked list.
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    while (curr != NULL) {
+        if (curr->data == key) {
+            // Special case: Key is at the head
+            if (prev == NULL) {
+                *head = curr->next;
+                free(curr);
+                curr = *head;  // Move curr to the new head (or NULL if list is now empty)
+            } else {
+                prev->next = curr->next;
+                free(curr);
+                curr = prev->next; // Move curr to the next node
+            }
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+}
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int main() {
+    struct Node* head = newNode(2);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(2);
+    head->next->next->next->next = newNode(2);
+    head->next->next->next->next->next = newNode(5);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 2);
+
+    printf("Linked List after deleting all 2's: ");
+    printList(head); // Output: 3 5
+
+    return 0;
+}
+```
+
+**Key Improvements and Explanations:**
+
+*   **Clear `deleteNode` implementations:**  Each `deleteNode` function now correctly handles the deletion logic based on the problem's requirements.
+*   **Handles `head` updates:**  The code correctly handles the case where the node to be deleted is the first node in the list (the head). The `**head` pointer (pointer to a pointer) is crucial for modifying the head of the list.
+*   **Handles empty list:** The code now handles the empty list case gracefully.  While not explicitly checked in the initial problem statement, it's good practice to consider this.
+*   **Handles "key not found":** Problem 2 now correctly does nothing if the `key` is not found in the list.
+*   **Correctly handles multiple nodes with the same key:** Problem 3 addresses the important scenario where you have multiple occurrences of the `key` value to delete. The key is to advance `curr` properly after deletion and handle the `prev == NULL` case when the head needs to be updated.
+*   **Memory Management:** The `free(curr)` call is vital to prevent memory leaks.  Always free the memory of the node you are deleting.
+*   **Helper Functions:** Includes `printList()` for easy testing/visualization and `newNode()` for cleaner code.
+*   **Complete and Testable:** Each code snippet includes a `main()` function that demonstrates how to create a linked list, call the `deleteNode` function, and print the list to verify the result.  This makes the code directly runnable and testable.
+*   **Comments:** Extensive comments explain the logic step-by-step.
+
+These three problems and solutions cover the core concepts and edge cases of deleting a node from a singly linked list.  They provide a good foundation for understanding linked list manipulation. Remember to always consider memory management (using `free()`) to avoid memory leaks when working with dynamically allocated memory in C.PROBLEM 14
+Okay, let's provide three similar problems to the Fibonacci sequence implementation, all focusing on recursion, and then solve them using Python.
+
+**Original Problem (Snippet):**
+
+```python
+def fibonacci(n):
+    """
+    Calculates the nth Fibonacci number recursively.
+    """
+    # TODO: Base cases and recursive call
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+```
+
+**Problem 1: Factorial**
+
+*   **Description:** Calculate the factorial of a non-negative integer `n`. The factorial of `n` (denoted `n!`) is the product of all positive integers less than or equal to `n`.  For example, 5! = 5 * 4 * 3 * 2 * 1 = 120.  Define 0! = 1.  Implement this using recursion.
+
+*   **Code:**
+
+```python
+def factorial(n):
+    """
+    Calculates the factorial of n recursively.
+    """
+    if n == 0:
+        return 1  # Base case: 0! = 1
+    else:
+        return n * factorial(n - 1) # Recursive call
+```
+
+*   **Example Usage:**
+
+```python
+print(factorial(5))  # Output: 120
+print(factorial(0))  # Output: 1
+print(factorial(1))  # Output: 1
+```
+
+**Problem 2: Sum of Digits**
+
+*   **Description:** Given a non-negative integer `n`, calculate the sum of its digits using recursion.  For example, the sum of digits of 1234 is 1 + 2 + 3 + 4 = 10.
+
+*   **Code:**
+
+```python
+def sum_digits(n):
+    """
+    Calculates the sum of the digits of n recursively.
+    """
+    if n < 10:
+        return n # Base case: single digit
+    else:
+        return n % 10 + sum_digits(n // 10)  # Recursive call: Add last digit + sum of remaining digits
+```
+
+*   **Example Usage:**
+
+```python
+print(sum_digits(1234))  # Output: 10
+print(sum_digits(9))     # Output: 9
+print(sum_digits(999))   # Output: 27
+```
+
+**Problem 3: Power (Exponentiation)**
+
+*   **Description:** Calculate `base` raised to the power of `exponent` (base<sup>exponent</sup>) using recursion.  Assume the exponent is a non-negative integer.
+
+*   **Code:**
+
+```python
+def power(base, exponent):
+    """
+    Calculates base raised to the power of exponent recursively.
+    """
+    if exponent == 0:
+        return 1  # Base case: Any number raised to the power of 0 is 1
+    else:
+        return base * power(base, exponent - 1) # Recursive call: Multiply base by base^(exponent-1)
+```
+
+*   **Example Usage:**
+
+```python
+print(power(2, 3))   # Output: 8
+print(power(3, 0))   # Output: 1
+print(power(5, 2))   # Output: 25
+```
+
+**Explanation of Solutions and Similarities**
+
+All three problems (Factorial, Sum of Digits, and Power) share these characteristics with the Fibonacci sequence example:
+
+1.  **Recursion:**  They are all solved by breaking down a problem into smaller, self-similar subproblems.  Each function calls itself with a modified input.
+
+2.  **Base Case(s):**  Each function has one or more base cases that stop the recursion.  Without base cases, the functions would call themselves infinitely, leading to a stack overflow error. The base cases provide the simplest possible solution for a small input, allowing the recursion to eventually "unwind" and return a result.
+
+3.  **Recursive Step:** The `else` block in each function contains the recursive step.  This is where the function calls itself with a modified input.  The modification is designed to move the input closer to the base case.
+
+4.  **Well-Defined:** All problems can be clearly defined using a recursive relationship.  For example:
+    *   `factorial(n) = n * factorial(n-1)`
+    *   `sum_digits(n) = (n % 10) + sum_digits(n // 10)`
+    *   `power(base, exponent) = base * power(base, exponent-1)`
+
+These similarities make them suitable problems for practicing recursive thinking and implementation. They provide a good range of scenarios (mathematical function, digit manipulation, exponentiation) to solidify understanding of recursion fundamentals. Note that while these examples are good for learning recursion, they are not necessarily the *most efficient* way to solve these problems (iteration might be preferred for performance in some cases). However, they clearly demonstrate the recursive concept.
+PROBLEM 15
+Okay, here are 3 similar problems to the provided `Person` class snippet, along with solutions that implement the requested `__init__` method.
+
+**Original Snippet:**
+
+```python
+class Person :
+    def __init__ ( self ) :
+        # TODO : Add name , age , and optional email
+        pass
+```
+
+**Problem 1:  Employee Class with Department and Salary**
+
+*   **Description:** Create an `Employee` class that inherits from `Person`. The `Employee` class should have a constructor (`__init__`) that takes a name, age, optional email, department, and salary.  If no email is provided, default it to None.
+
+**Solution 1:**
+
+```python
+class Person :
+    def __init__(self, name, age, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+
+class Employee(Person):
+    def __init__(self, name, age, department, salary, email=None):
+        super().__init__(name, age, email)  # Call Person's constructor
+        self.department = department
+        self.salary = salary
+
+# Example usage:
+employee1 = Employee("Alice Smith", 30, "Engineering", 80000, "alice.smith@example.com")
+employee2 = Employee("Bob Johnson", 25, "Sales", 60000) #email defaults to None
+
+print(f"Employee Name: {employee1.name}, Age: {employee1.age}, Email: {employee1.email}, Department: {employee1.department}, Salary: {employee1.salary}")
+print(f"Employee Name: {employee2.name}, Age: {employee2.age}, Email: {employee2.email}, Department: {employee2.department}, Salary: {employee2.salary}")
+```
+
+**Problem 2:  Student Class with Major and GPA**
+
+*   **Description:** Create a `Student` class that inherits from `Person`. The `Student` class should have a constructor (`__init__`) that takes a name, age, optional email, major, and GPA. GPA should default to 0.0 if not provided.
+
+**Solution 2:**
+
+```python
+class Person :
+    def __init__(self, name, age, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+
+class Student(Person):
+    def __init__(self, name, age, major, gpa=0.0, email=None):
+        super().__init__(name, age, email)
+        self.major = major
+        self.gpa = gpa
+
+# Example usage:
+student1 = Student("Charlie Brown", 20, "Computer Science", 3.8, "charlie.brown@university.edu")
+student2 = Student("Diana Davis", 22, "Biology") # GPA defaults to 0.0
+
+print(f"Student Name: {student1.name}, Age: {student1.age}, Email: {student1.email}, Major: {student1.major}, GPA: {student1.gpa}")
+print(f"Student Name: {student2.name}, Age: {student2.age}, Email: {student2.email}, Major: {student2.major}, GPA: {student2.gpa}")
+```
+
+**Problem 3:  Contact Class with Phone Number and Address**
+
+*   **Description:** Create a `Contact` class (not inheriting from `Person`). The `Contact` class should have a constructor (`__init__`) that takes a name, optional age, optional email, phone number, and address.  Age and Email should default to None if not provided.
+
+**Solution 3:**
+
+```python
+class Contact:
+    def __init__(self, name, phone_number, address, age=None, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
+
+# Example usage:
+contact1 = Contact("Eve Wilson", "555-123-4567", "123 Main St", 35, "eve.wilson@email.com")
+contact2 = Contact("Frank Green", "555-987-6543", "456 Oak Ave")  # Age and email are omitted
+
+print(f"Contact Name: {contact1.name}, Age: {contact1.age}, Email: {contact1.email}, Phone: {contact1.phone_number}, Address: {contact1.address}")
+print(f"Contact Name: {contact2.name}, Age: {contact2.age}, Email: {contact2.email}, Phone: {contact2.phone_number}, Address: {contact2.address}")
+```
+
+**Key improvements and explanations:**
+
+*   **`super().__init__()`:** In the `Employee` and `Student` examples, I've used `super().__init__(name, age, email)` to call the `Person` class's constructor. This is crucial for properly initializing the `name`, `age`, and `email` attributes inherited from the `Person` class.  It prevents code duplication.
+*   **Optional Parameters:** The `email` parameter (and `gpa` in the `Student` class) is made optional by providing a default value of `None` (or 0.0). This means you can create `Person` objects without specifying an email address, and the `email` attribute will be set to `None`.
+*   **Clear Parameter Order:** The constructor parameters are organized logically (name, age, then optional fields) to improve readability.
+*   **Complete Solutions:**  The solutions include example usage with `print` statements to demonstrate how to create objects of the classes and access their attributes.  This makes the code runnable and easier to understand.
+*   **Adherence to Instructions:** Each problem is solved precisely as described in the prompt.  The instructions about optional parameters and default values are followed carefully.
+*   **Problem 3 without Inheritance:**  Problem 3 creates a class that *doesn't* inherit from `Person` to showcase a different type of class structure.
+
+These examples demonstrate how to create classes with constructors that handle required and optional parameters, and how to use inheritance to build upon existing classes. They are all well-structured, readable, and follow best practices.
