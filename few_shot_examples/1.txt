@@ -1,0 +1,111 @@
+**Problem 1: Count Character Frequency in a String**
+
+*   **Description:** Given a string, calculate the frequency of each character in the string.  Case should be ignored (i.e., 'A' and 'a' should be counted as the same character).
+
+*   **Example:**
+
+    *   Input: "Hello World"
+    *   Output: `{d=1, e=1, h=1, l=3, o=2, r=1, w=1}`
+
+*   **Java Solution:**
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+    public Map<Character, Integer> countCharacterFrequency(String str) {
+        Map<Character, Integer> freqMap = new HashMap<>();
+        str = str.toLowerCase(); // Ignore case
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if(Character.isLetter(c)) { // Count only letters
+                freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
+            }
+        }
+        return freqMap;
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        String input = "Hello World";
+        Map<Character, Integer> result = sol.countCharacterFrequency(input);
+        System.out.println(result); // Output: {d=1, e=1, h=1, l=3, o=2, r=1, w=1}
+    }
+}
+```
+
+**Problem 2: Count Frequency of Numbers in an Array**
+
+*   **Description:** Given an array of integers, calculate the frequency of each number in the array.
+
+*   **Example:**
+
+    *   Input: `[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]`
+    *   Output: `{1=1, 2=2, 3=3, 4=4}`
+
+*   **Java Solution:**
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+    public Map<Integer, Integer> countNumberFrequency(int[] nums) {
+        Map<Integer, Integer> freqMap = new HashMap<>();
+        for (int num : nums) {
+            freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
+        }
+        return freqMap;
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        int[] input = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+        Map<Integer, Integer> result = sol.countNumberFrequency(input);
+        System.out.println(result); // Output: {1=1, 2=2, 3=3, 4=4}
+    }
+}
+```
+
+**Problem 3: Count Word Frequency Ignoring Common Words (Stop Words)**
+
+*   **Description:** Given a list of words and a set of "stop words" (common words like "the", "a", "is"), calculate the frequency of each word, but exclude the stop words from the count.
+
+*   **Example:**
+
+    *   Input: `words = ["the", "quick", "brown", "fox", "the", "lazy", "dog"]`, `stopWords = ["the", "a", "is"]`
+    *   Output: `{quick=1, brown=1, fox=1, lazy=1, dog=1}`
+
+*   **Java Solution:**
+
+```java
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+class Solution {
+    public Map<String, Integer> countWordFrequencyIgnoringStopWords(List<String> words, Set<String> stopWords) {
+        Map<String, Integer> freqMap = new HashMap<>();
+        for (String word : words) {
+            if (!stopWords.contains(word)) {
+                freqMap.put(word, freqMap.getOrDefault(word, 0) + 1);
+            }
+        }
+        return freqMap;
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        List<String> words = List.of("the", "quick", "brown", "fox", "the", "lazy", "dog");
+        Set<String> stopWords = new HashSet<>(List.of("the", "a", "is"));
+        Map<String, Integer> result = sol.countWordFrequencyIgnoringStopWords(words, stopWords);
+        System.out.println(result); // Output: {quick=1, brown=1, fox=1, lazy=1, dog=1}
+    }
+}
+```
+
+These solutions effectively demonstrate the application of similar frequency counting techniques to different data structures and with varying constraints.  The provided explanations highlight the key aspects of each solution and why certain choices were made.
+

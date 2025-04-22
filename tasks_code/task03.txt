@@ -1,0 +1,4 @@
+int * getArray (int size ) {
+    int arr [ size ]; // Warning : local array
+    return arr ; // Bug: returning pointer to local variable
+}

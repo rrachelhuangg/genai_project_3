@@ -1,0 +1,89 @@
+To convert a Kotlin data class into a REST API using Ktor and implement functionality such as checking if a number is prime, you'll first need to set up a Ktor server and create various components such as routes and handlers. Below are the steps to do this, integrating the prime-checking functionality provided in your Python function.
+
+1. **Set up your Kotlin environment:**
+
+   Make sure you have Kotlin and Gradle set up in your environment. You'll create a new Ktor project using either IntelliJ IDEA or through a build script using Gradle.
+
+2. **Create a new Ktor project:**
+
+   You can create a new Ktor project template either using IntelliJ IDEA's project wizard or manually. Here, we'll assume a Gradle setup for simplicity.
+
+3. **Add Ktor dependencies to `build.gradle.kts`:**
+
+   Include Ktor dependencies and necessary plugins in your `build.gradle.kts` file:
+
+   ```kotlin
+   plugins {
+       application
+       kotlin("jvm") version "1.8.10"
+   }
+   
+   application {
+       mainClass.set("MainKt")
+   }
+   
+   repositories {
+       mavenCentral()
+   }
+   
+   dependencies {
+       implementation("io.ktor:ktor-server-netty:2.3.4")
+       implementation("io.ktor:ktor-server-core:2.3.4")
+       implementation("io.ktor:ktor-server-host-common:2.3.4")
+       implementation("io.ktor:ktor-server-cors:2.3.4")
+       implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
+   }
+   ```
+
+4. **Create the `main` function and configure Ktor application:**
+
+   Create a Kotlin file, say `Main.kt`, and define your Ktor application entry point.
+
+   ```kotlin
+   import io.ktor.application.*
+   import io.ktor.features.*
+   import io.ktor.http.*
+   import io.ktor.response.*
+   import io.ktor.routing.*
+   import io.ktor.server.engine.*
+   import io.ktor.server.netty.*
+
+   fun main() {
+       embeddedServer(Netty, port = 8080) {
+           install(CallLogging)
+           install(CORS) {
+               method(HttpMethod.Get)
+               anyHost()
+           }
+           routing {
+               get("/is_prime/{number}") {
+                   val number = call.parameters["number"]?.toIntOrNull()
+                   if (number != null) {
+                       val result = isPrime(number)
+                       call.respondText("Is $number prime? $result")
+                   } else {
+                       call.respondText("Invalid number provided", status = HttpStatusCode.BadRequest)
+                   }
+               }
+           }
+       }.start(wait = true)
+   }
+
+   fun isPrime(n: Int): Boolean {
+       if (n <= 1) return false
+       for (i in 2..(Math.sqrt(n.toDouble()).toInt())) {
+           if (n % i == 0) return false
+       }
+       return true
+   }
+   ```
+
+5. **Run the server:**
+
+   Once everything is set up, you can build and run your Ktor server. By default, it will listen on port 8080. You can test your REST API by navigating to `http://localhost:8080/is_prime/{number}`, replacing `{number}` with the number you want to test.
+
+6. **Test the API:**
+
+   You can use tools such as curl, Postman, or a web browser to test the endpoint. For example, `http://localhost:8080/is_prime/17` should return `Is 17 prime? true`.
+
+This setup gives you a basic Ktor server with a single endpoint to check if a number is prime, mirroring the logic of the Python `is_prime` function you provided.

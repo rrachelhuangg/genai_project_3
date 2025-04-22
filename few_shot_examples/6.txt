@@ -1,0 +1,88 @@
+**Problem 1:  Find users who haven't written any reviews.**
+
+*   **Problem Statement:** List the names of users who have not submitted any reviews.
+
+*   **SQL Solution:**
+
+```sql
+SELECT name
+FROM users
+WHERE id NOT IN (SELECT user_id FROM reviews);
+```
+
+*   **Explanation:**
+    *   The inner `SELECT user_id FROM reviews` retrieves all user IDs that appear in the `reviews` table.
+    *   The outer `SELECT name FROM users WHERE id NOT IN (...)` selects the names of users whose IDs are *not* present in the list returned by the inner query. This effectively identifies users who haven't written any reviews.
+    * An alternative way to do this is with a LEFT JOIN.
+
+    ```sql
+    SELECT u.name
+    FROM users u
+    LEFT JOIN reviews r ON u.id = r.user_id
+    WHERE r.user_id IS NULL;
+
+    ```
+    * This joins the user table to the reviews table on `user_id`. If a user has no reviews, then the fields from the reviews table in the resulting record will be `NULL`. We can filter the users where the `user_id` from the review table is `NULL` to get only those who have no reviews.
+
+**Problem 2: List the titles of books that have an average rating greater than 4.**
+
+*   **Problem Statement:** Retrieve the titles of books that have an average rating higher than 4.  Order the results by title alphabetically.
+
+*   **SQL Solution:**
+
+```sql
+SELECT b.title
+FROM books b
+JOIN reviews r ON b.id = r.book_id
+GROUP BY b.title
+HAVING AVG(r.rating) > 4
+ORDER BY b.title;
+```
+
+*   **Explanation:**
+    *   `JOIN books b ON b.id = r.book_id`:  This joins the `books` and `reviews` tables based on the `book_id`, linking books to their corresponding reviews.
+    *   `GROUP BY b.title`:  This groups the results by the book title, allowing us to calculate the average rating for each book.
+    *   `HAVING AVG(r.rating) > 4`:  This filters the grouped results, only including books where the average rating is greater than 4.
+    *   `ORDER BY b.title`: Orders the results alphabetically by book title.
+
+**Problem 3:  Find the name of the user who has written the most reviews.**
+
+*   **Problem Statement:** Determine the name of the user who has written the largest number of reviews.
+
+*   **SQL Solution:**
+
+```sql
+SELECT u.name
+FROM users u
+JOIN (
+    SELECT user_id, COUNT(*) AS review_count
+    FROM reviews
+    GROUP BY user_id
+    ORDER BY review_count DESC
+    LIMIT 1
+) AS review_counts ON u.id = review_counts.user_id;
+```
+
+*   **Explanation:**
+    *   The inner query `SELECT user_id, COUNT(*) AS review_count FROM reviews GROUP BY user_id ORDER BY review_count DESC LIMIT 1` calculates the number of reviews for each user, orders them in descending order based on the count, and then takes only the top row (the user with the most reviews). It returns the `user_id` and the `review_count`.
+    *   The outer query `SELECT u.name FROM users u JOIN (...) AS review_counts ON u.id = review_counts.user_id` joins the `users` table with the result of the inner query, using the `user_id` to find the name of the user who wrote the most reviews. It then selects and returns the user's name.
+
+    *   Another way to do this is using `WITH` clause:
+        ```sql
+        WITH ReviewCounts AS (
+            SELECT user_id, COUNT(*) AS review_count
+            FROM reviews
+            GROUP BY user_id
+        ),
+        MaxReviewCount AS (
+            SELECT MAX(review_count) AS max_count
+            FROM ReviewCounts
+        )
+        SELECT u.name
+        FROM users u
+        JOIN ReviewCounts rc ON u.id = rc.user_id
+        JOIN MaxReviewCount mc ON rc.review_count = mc.max_count;
+        ```
+        This code first defines a common table expression (CTE) called `ReviewCounts` that calculates the number of reviews for each user.  Then it defines a CTE `MaxReviewCount` which contains the maximum review count.  Then we select the user name from users, join it to `ReviewCounts` and then to `MaxReviewCount` to get the user who has the maximum number of reviews.
+
+These problems are similar to the original in that they involve querying data across multiple tables using joins, aggregations, and filtering, based on the provided schema. They also require understanding of foreign key relationships.  The solutions demonstrate common SQL techniques for data retrieval and analysis.

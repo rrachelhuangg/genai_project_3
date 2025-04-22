@@ -1,0 +1,3 @@
+public int getLength ( String s ) {
+    return s . length () ; // What if s is null ?
+}

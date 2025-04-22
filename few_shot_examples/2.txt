@@ -1,0 +1,89 @@
+**Problem 1: Product of Range**
+
+**Description:**
+
+Write a function `product_range(start, end)` that calculates the product (multiplication) of all numbers within the given range (inclusive of `start`, exclusive of `end`).  Handle the case where the range is empty (start >= end) by returning 1.
+
+**Solution:**
+
+```python
+def product_range(start, end):
+    """
+    Calculates the product of numbers in the range [start, end).
+    Returns 1 if the range is empty (start >= end).
+    """
+    product = 1
+    if start >= end:
+        return 1  # Empty range: return identity element for multiplication
+    for i in range(start, end):
+        product *= i
+    return product
+
+# Example Usage:
+print(product_range(2, 5))  # Output: 2 * 3 * 4 = 24
+print(product_range(5, 5))  # Output: 1 (Empty range)
+print(product_range(1, 4)) # Output: 1 * 2 * 3 = 6
+```
+
+**Problem 2: Sum of Squares of a Range**
+
+**Description:**
+
+Write a function `sum_squares(start, end)` that calculates the sum of the squares of all numbers within the given range (inclusive of `start`, exclusive of `end`).
+
+**Solution:**
+
+```python
+def sum_squares(start, end):
+    """
+    Calculates the sum of the squares of numbers in the range [start, end).
+    """
+    total = 0
+    for i in range(start, end):
+        total += i * i
+    return total
+
+# Example Usage:
+print(sum_squares(2, 5))  # Output: 2^2 + 3^2 + 4^2 = 4 + 9 + 16 = 29
+print(sum_squares(1, 4)) # Output: 1 + 4 + 9 = 14
+print(sum_squares(0, 3)) # Output: 0 + 1 + 4 = 5
+```
+
+**Problem 3: Sum of Even Numbers in a Range**
+
+**Description:**
+
+Write a function `sum_even(start, end)` that calculates the sum of only the *even* numbers within the given range (inclusive of `start`, exclusive of `end`).
+
+**Solution:**
+
+```python
+def sum_even(start, end):
+    """
+    Calculates the sum of even numbers in the range [start, end).
+    """
+    total = 0
+    for i in range(start, end):
+        if i % 2 == 0:  # Check if i is even
+            total += i
+    return total
+
+# Example Usage:
+print(sum_even(2, 7))  # Output: 2 + 4 + 6 = 12
+print(sum_even(1, 6))  # Output: 2 + 4 = 6
+print(sum_even(0, 5)) # Output: 0 + 2 + 4 = 6
+```
+
+**Explanation of Similarities:**
+
+All these problems:
+
+*   **Involve Ranges:**  They operate on a sequence of numbers defined by a `start` and `end` value.
+*   **Use Loops:**  They use a `for` loop (specifically `range()`) to iterate through the numbers in the defined range.
+*   **Accumulate a Result:**  They use a variable (e.g., `total`, `product`) to accumulate the result of an operation performed on each number in the range.
+*   **Return a Single Value:**  They ultimately return a single value that represents the result of the calculation.
+*   **Exclusive End:** They all use `end` as a exclusive argument.
+*   **Simple Arithmetic:** They all involve a simple arithmetic operation.
+*   **Handle Empty/Edge Cases** (in some cases): They often include an `if` statement to handle cases where the range is empty or requires special treatment.
+
+The core difference lies in the *operation* performed within the loop and how the result is accumulated.  The fundamental structure of iterating through a range and building up a result remains the same.

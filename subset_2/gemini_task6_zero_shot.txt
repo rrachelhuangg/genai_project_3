@@ -1,0 +1,144 @@
+```sql
+-- Users table
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(255) UNIQUE NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL, -- Store hashed passwords, never plain text
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
+    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ProfilePicture VARCHAR(255), -- Store the path to the profile picture
+    Bio TEXT,
+    Location VARCHAR(255)
+);
+
+-- Books table
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(255) NOT NULL,
+    Author VARCHAR(255) NOT NULL,
+    ISBN VARCHAR(20) UNIQUE, -- International Standard Book Number
+    PublicationDate DATE,
+    Genre VARCHAR(255),
+    Description TEXT,
+    CoverImage VARCHAR(255) -- Store the path to the cover image
+);
+
+-- Reviews table
+CREATE TABLE Reviews (
+    ReviewID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    BookID INT NOT NULL,
+    Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5), --  Rating should be between 1 and 5 (inclusive)
+    ReviewText TEXT,
+    ReviewDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    HelpfulVotes INT DEFAULT 0,  -- Number of users who found the review helpful
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+);
+
+
+-- Indexes (Optional, but can improve query performance)
+CREATE INDEX idx_users_username ON Users(Username);
+CREATE INDEX idx_books_title ON Books(Title);
+CREATE INDEX idx_reviews_userid ON Reviews(UserID);
+CREATE INDEX idx_reviews_bookid ON Reviews(BookID);
+CREATE INDEX idx_reviews_rating ON Reviews(Rating);
+```
+
+Key improvements and explanations:
+
+* **Data Types:**  Using appropriate data types like `INT`, `VARCHAR`, `TEXT`, `DATE`, and `TIMESTAMP`.  `TEXT` is suitable for longer text fields like descriptions and reviews.  `VARCHAR` is good for shorter strings.
+* **Primary Keys:** Each table has a primary key (`UserID`, `BookID`, `ReviewID`) for unique identification. `AUTO_INCREMENT` is used for automatic ID generation.
+* **Foreign Keys:** The `Reviews` table uses foreign keys (`UserID`, `BookID`) to establish relationships with the `Users` and `Books` tables, enforcing referential integrity (making sure a review is always associated with a valid user and book).
+* **`UNIQUE` Constraints:**  `Username`, `Email` (in `Users`), and `ISBN` (in `Books`) are declared `UNIQUE` to prevent duplicate entries.  This is important for data integrity.
+* **`NOT NULL` Constraints:**  Critical fields like `Username`, `Email`, `Password`, `Title`, `Author`, `UserID`, `BookID`, and `Rating` are marked `NOT NULL` to ensure these values are always present.
+* **`CHECK` Constraint:**  `CHECK (Rating BETWEEN 1 AND 5)` in the `Reviews` table ensures that the rating is within a valid range. This is crucial for data quality.
+* **`DEFAULT` Values:**  `RegistrationDate` and `ReviewDate` are set to `CURRENT_TIMESTAMP` so they automatically record when the user registered or when the review was created. `HelpfulVotes` defaults to 0.
+* **`TIMESTAMP` vs. `DATE`:**  Use `DATE` for fields that represent only a date (like `PublicationDate`). Use `TIMESTAMP` for fields that represent a specific point in time (date and time), such as registration date and review date.
+* **Password Storage:**  **CRITICAL:**  The `Password` field should *never* store plain text passwords.  Always hash passwords using a strong hashing algorithm (like bcrypt, Argon2, or scrypt) *before* storing them in the database. Your application code handles this hashing.
+* **Image Storage:** `ProfilePicture` and `CoverImage` store *paths* to the image files.  The actual images are stored on the file system or in a cloud storage service (like AWS S3, Google Cloud Storage, or Azure Blob Storage).  Storing images directly in the database is generally inefficient.
+* **Indexes:**  Indexes are added to columns frequently used in `WHERE` clauses and `JOIN` conditions to speed up queries.  Consider which columns are most often used for searching and filtering.  Adding too many indexes can slow down write operations (inserts and updates), so it's a trade-off.
+* **Database Choice:**  This schema is compatible with most relational databases (MySQL, PostgreSQL, SQLite, etc.).  Minor syntax adjustments might be needed depending on the specific database system you choose.
+
+**Example Usage and Considerations:**
+
+1. **Hashing Passwords (Important - in your application code):**
+   ```python
+   import bcrypt
+
+   def hash_password(password):
+       hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+       return hashed_password.decode('utf-8')  # Store as a string in the database
+
+   def check_password(password, hashed_password):
+       return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+   # Example registration:
+   plain_text_password = "mySecretPassword123"
+   hashed_password = hash_password(plain_text_password)
+
+   # Store 'hashed_password' in the 'Password' column of the Users table.
+
+   # Example login:
+   entered_password = "mySecretPassword123"
+   stored_hashed_password =  # Retrieve from the database
+
+   if check_password(entered_password, stored_hashed_password):
+       print("Login successful!")
+   else:
+       print("Login failed.")
+   ```
+
+2. **Inserting a New User:**
+   ```sql
+   INSERT INTO Users (Username, Email, Password, FirstName, LastName)
+   VALUES ('johndoe', 'john.doe@example.com', 'hashed_password_here', 'John', 'Doe');
+   ```
+   *Remember to replace `'hashed_password_here'` with the *actual* hashed password.*
+
+3. **Adding a Book:**
+   ```sql
+   INSERT INTO Books (Title, Author, ISBN, PublicationDate, Genre, Description)
+   VALUES ('The Hitchhiker\'s Guide to the Galaxy', 'Douglas Adams', '978-0345391803', '1979-10-12', 'Science Fiction', 'A comedic science fiction series...');
+   ```
+
+4. **Writing a Review:**
+   ```sql
+   INSERT INTO Reviews (UserID, BookID, Rating, ReviewText)
+   VALUES (1, 1, 5, 'A hilarious and thought-provoking book!');
+   ```
+   *Assuming UserID 1 and BookID 1 exist.*
+
+5. **Querying Reviews for a Book:**
+   ```sql
+   SELECT
+       Reviews.ReviewID,
+       Users.Username,
+       Reviews.Rating,
+       Reviews.ReviewText,
+       Reviews.ReviewDate
+   FROM Reviews
+   JOIN Users ON Reviews.UserID = Users.UserID
+   WHERE Reviews.BookID = 1
+   ORDER BY Reviews.ReviewDate DESC;
+   ```
+
+6. **Calculating the Average Rating for a Book:**
+
+   ```sql
+   SELECT AVG(Rating) AS AverageRating
+   FROM Reviews
+   WHERE BookID = 1;
+   ```
+
+7. **Searching for Books:**
+
+   ```sql
+   SELECT BookID, Title, Author
+   FROM Books
+   WHERE Title LIKE '%Hitchhiker%' OR Author LIKE '%Adams%';
+   ```
+
+This improved schema and the accompanying examples provide a solid foundation for your review app.  Remember to adapt it to your specific needs and consider the performance implications of your queries. Also, always prioritize security best practices, especially when dealing with user passwords and sensitive data.

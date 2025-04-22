@@ -1,0 +1,240 @@
+**Problem 1: Basic Deletion (Key Exists)**
+
+*   **Description:** Delete the first occurrence of a node with the value `key` from the linked list.  Assume that the `key` is guaranteed to exist in the linked list.  Handle the case where the `key` is the first node.
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    // If head node itself holds the key
+    if (curr != NULL && curr->data == key) {
+        *head = curr->next; // Changed head
+        free(curr);               // Free old head
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (curr != NULL && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // If key was not present in linked list (This will not happen with the assumed constraint)
+    if (curr == NULL) return;
+
+    // Unlink the node from linked list
+    prev->next = curr->next;
+
+    // Free memory
+    free(curr);
+}
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int main() {
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 3);
+
+    printf("Linked List after deleting 3: ");
+    printList(head);  // Output: 1 2 4
+
+    deleteNode(&head, 1);
+    printf("Linked List after deleting 1: ");
+    printList(head); // Output 2 4
+
+    return 0;
+}
+```
+
+**Problem 2: Deletion (Key Might Not Exist)**
+
+*   **Description:** Delete the first occurrence of a node with the value `key` from the linked list.  If the `key` is not found in the list, the function should do nothing (the list should remain unchanged).
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    // If head node itself holds the key
+    if (curr != NULL && curr->data == key) {
+        *head = curr->next;
+        free(curr);
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (curr != NULL && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // If key was not present in linked list
+    if (curr == NULL) return;
+
+    // Unlink the node from linked list
+    prev->next = curr->next;
+
+    // Free memory
+    free(curr);
+}
+
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+
+int main() {
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 5); // Key doesn't exist
+
+    printf("Linked List after trying to delete 5 (not found): ");
+    printList(head); // Output: 1 2 3 4 (no change)
+
+    deleteNode(&head, 3);
+
+    printf("Linked List after deleting 3: ");
+    printList(head); // Output: 1 2 4
+    return 0;
+}
+```
+
+**Problem 3: Delete All Occurrences (Multiple Nodes with the Same Key)**
+
+*   **Description:** Delete *all* occurrences of a node with the value `key` from the linked list.
+
+*   **Solution:**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    while (curr != NULL) {
+        if (curr->data == key) {
+            // Special case: Key is at the head
+            if (prev == NULL) {
+                *head = curr->next;
+                free(curr);
+                curr = *head;  // Move curr to the new head (or NULL if list is now empty)
+            } else {
+                prev->next = curr->next;
+                free(curr);
+                curr = prev->next; // Move curr to the next node
+            }
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+}
+
+// Helper function to print the linked list (for testing)
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int main() {
+    struct Node* head = newNode(2);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(2);
+    head->next->next->next->next = newNode(2);
+    head->next->next->next->next->next = newNode(5);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 2);
+
+    printf("Linked List after deleting all 2's: ");
+    printList(head); // Output: 3 5
+
+    return 0;
+}
+```

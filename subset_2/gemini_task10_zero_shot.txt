@@ -1,0 +1,5 @@
+The Python function `reverse_words(sentence)` takes a string `sentence` as input and returns a new string with the words in the input sentence reversed. It achieves this by:
+
+1.  `sentence.split()`: Splitting the input sentence into a list of individual words, using whitespace as the delimiter.
+2.  `[::-1]`: Reversing the order of the words in the list.
+3.  `' '.join(...)`: Joining the reversed list of words back into a single string, with spaces separating each word.

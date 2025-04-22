@@ -1,0 +1,8 @@
+struct Node {
+    int data ;
+    struct Node * next ;
+};
+
+void deleteNode ( struct Node ** head , int key ) {
+    // TODO : Implement node deletion
+}

@@ -1,0 +1,68 @@
+**Problem 1:  Employee Class with Department and Salary**
+
+*   **Description:** Create an `Employee` class that inherits from `Person`. The `Employee` class should have a constructor (`__init__`) that takes a name, age, optional email, department, and salary.  If no email is provided, default it to None.
+
+**Solution 1:**
+
+```python
+class Person :
+    def __init__(self, name, age, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+
+class Employee(Person):
+    def __init__(self, name, age, department, salary, email=None):
+        super().__init__(name, age, email)  # Call Person's constructor
+        self.department = department
+        self.salary = salary
+
+# Example usage:
+employee1 = Employee("Alice Smith", 30, "Engineering", 80000, "alice.smith@example.com")
+employee2 = Employee("Bob Johnson", 25, "Sales", 60000) #email defaults to None
+
+print(f"Employee Name: {employee1.name}, Age: {employee1.age}, Email: {employee1.email}, Department: {employee1.department}, Salary: {employee1.salary}")
+print(f"Employee Name: {employee2.name}, Age: {employee2.age}, Email: {employee2.email}, Department: {employee2.department}, Salary: {employee2.salary}")
+```
+
+**Problem 2:  Student Class with Major and GPA**
+
+*   **Description:** Create a `Student` class that inherits from `Person`. The `Student` class should have a constructor (`__init__`) that takes a name, age, optional email, major, and GPA. GPA should default to 0.0 if not provided.
+
+**Solution 2:**
+
+```python
+class Person :
+    def __init__(self, name, age, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+
+class Student(Person):
+    def __init__(self, name, age, major, gpa=0.0, email=None):
+        super().__init__(name, age, email)
+        self.major = major
+        self.gpa = gpa
+
+# Example usage:
+student1 = Student("Charlie Brown", 20, "Computer Science", 3.8, "charlie.brown@university.edu")
+student2 = Student("Diana Davis", 22, "Biology") # GPA defaults to 0.0
+
+print(f"Student Name: {student1.name}, Age: {student1.age}, Email: {student1.email}, Major: {student1.major}, GPA: {student1.gpa}")
+print(f"Student Name: {student2.name}, Age: {student2.age}, Email: {student2.email}, Major: {student2.major}, GPA: {student2.gpa}")
+```
+
+**Problem 3:  Contact Class with Phone Number and Address**
+
+*   **Description:** Create a `Contact` class (not inheriting from `Person`). The `Contact` class should have a constructor (`__init__`) that takes a name, optional age, optional email, phone number, and address.  Age and Email should default to None if not provided.
+
+**Solution 3:**
+
+```python
+class Contact:
+    def __init__(self, name, phone_number, address, age=None, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address

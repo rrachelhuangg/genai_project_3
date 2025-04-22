@@ -1,0 +1,91 @@
+**Problem 1: Reverse the Order of Characters in Each Word (and Reverse the Word Order)**
+
+*   **Problem Description:** Write a function that takes a sentence as input and reverses the order of characters within each word, *and* reverses the order of the words in the sentence.  For example, "hello world" should become "dlrow olleh".
+
+*   **Solution:**
+
+```python
+def reverse_chars_and_words(sentence):
+    words = sentence.split()
+    reversed_words = []
+    for word in words[::-1]: #Reverse the order of words first.
+        reversed_words.append(word[::-1])  # Reverse each word
+    return ' '.join(reversed_words)
+
+# Example usage:
+sentence = "hello world"
+reversed_sentence = reverse_chars_and_words(sentence)
+print(reversed_sentence)  # Output: dlrow olleh
+```
+
+*   **Explanation:**
+
+    1.  **`sentence.split()`:** Splits the sentence into a list of words.
+    2.  **Loop through reversed word array:** The code now iterates over the words in reversed order.
+    3.  **`word[::-1]`:**  This reverses each individual word using slicing.
+    4.  **`' '.join(reversed_words)`:** Joins the reversed words back together with spaces.
+
+**Problem 2: Reverse the order of only the words with length greater than 5**
+
+*   **Problem Description:** Write a function that takes a sentence as input and only reverses the order of the words with length greater than 5.
+For example, "Hello this is a longer word" should become "Hello this is a regnol word".
+
+*   **Solution:**
+
+```python
+def reverse_long_words(sentence):
+    words = sentence.split()
+    reversed_words = []
+    for word in words:
+        if len(word) > 5:
+            reversed_words.append(word[::-1])  # Reverse each word
+        else:
+            reversed_words.append(word)
+    return ' '.join(reversed_words)
+
+# Example usage:
+sentence = "Hello this is a longer word"
+reversed_sentence = reverse_long_words(sentence)
+print(reversed_sentence)
+```
+
+*   **Explanation:**
+
+    1.  **`sentence.split()`:** Splits the sentence into a list of words.
+    2.  **Loop through words:** The code now iterates over the words in order.
+    3.  **`len(word) > 5:`:** Check if the length of each word is greater than 5.
+    4.  **`word[::-1]`:**  If it is, reverse the individual word using slicing. Otherwise, append the original word.
+    5.  **`' '.join(reversed_words)`:** Joins the words back together with spaces.
+
+**Problem 3:  Reverse Words, But Keep Punctuation Anchored to the Correct Word**
+
+*   **Problem Description:**  Write a function that reverses the order of words in a sentence, but ensures that any punctuation attached to a word stays with that word when it's reversed. For example, "Hello, world!" should become "world! Hello,".
+
+*   **Solution:**
+
+```python
+import re
+
+def reverse_words_keep_punctuation(sentence):
+    words = re.findall(r'\w+[^\w\s]*|\W+', sentence)  # Split while keeping punctuation
+    return ' '.join(words[::-1])
+
+# Example usage:
+sentence = "Hello, world!"
+reversed_sentence = reverse_words_keep_punctuation(sentence)
+print(reversed_sentence)  # Output: world! Hello,
+```
+
+*   **Explanation:**
+
+    1.  **`import re`:** Imports the regular expression module.
+    2.  **`re.findall(r'\w+[^\w\s]*|\W+', sentence)`:** This is the core of the solution. It uses a regular expression to split the sentence into words *while* keeping punctuation attached.  Let's break down the regex:
+        *   `\w+`: Matches one or more word characters (letters, numbers, underscore).
+        *   `[^\w\s]*`: Matches zero or more non-word, non-whitespace characters (e.g., punctuation attached to a word).
+        *   `|`:  OR
+        *   `\W+`: Matches one or more non-word characters (punctuation or whitespace that is not attached to a word).
+        The `re.findall()` function finds *all* occurrences of this pattern in the string and returns them as a list.  This ensures that punctuation gets treated as part of the "word" it's attached to, or as a separate element if it's not attached.
+    3.  **`words[::-1]`:** Reverses the list of words and punctuation.
+    4.  **`' '.join(...)`:** Joins the elements back into a string with spaces.
+
+These problems demonstrate how the basic concept of reversing a sequence of words can be extended and modified to handle more complex requirements, such as character reversal, conditional reversing, and punctuation preservation.  The key is often to choose the correct method for splitting the sentence in a way that allows you to manipulate the pieces you need to manipulate while keeping the rest intact.

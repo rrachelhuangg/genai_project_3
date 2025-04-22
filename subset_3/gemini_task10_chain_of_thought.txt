@@ -1,0 +1,20 @@
+Okay, let's break down what the Python function `reverse_words(sentence)` does step-by-step:
+
+1.  **`sentence.split()`:** This part takes the input `sentence` (which is a string) and splits it into a list of individual words. The `split()` method, when called without any arguments, splits the string at each whitespace character (spaces, tabs, newlines, etc.).
+
+    *   **Example:** If `sentence` is "The quick brown fox", then `sentence.split()` becomes `['The', 'quick', 'brown', 'fox']`.
+
+2.  **`[:: -1]`:** This is a slicing operation on the list of words.  It's a concise way to reverse the order of elements in a list.
+
+    *   `[:]` creates a slice of the entire list.
+    *   `[::-1]` specifies a step of `-1`, which means the slice iterates through the list from the end to the beginning.
+
+    *   **Example:** If the list is `['The', 'quick', 'brown', 'fox']`, then `[::-1]` reverses it to `['fox', 'brown', 'quick', 'The']`.
+
+3.  **`' '.join(...)`:** This part takes the reversed list of words and joins them back together into a single string. The `' '` (a single space) is used as the separator between the words when joining.
+
+    *   **Example:** If the reversed list is `['fox', 'brown', 'quick', 'The']`, then `' '.join(['fox', 'brown', 'quick', 'The'])` becomes `"fox brown quick The"`.
+
+**In summary:**
+
+The function `reverse_words(sentence)` takes a string as input, splits it into individual words, reverses the order of those words, and then joins them back together into a new string with spaces between the words.  The result is a string where the original word order has been reversed.

@@ -1,0 +1,106 @@
+**Problem 1: Handling Basic Quoted Fields**
+
+*   **Problem Statement:**  Enhance the `parse_csv_line` function to correctly handle CSV lines where fields containing commas are enclosed in double quotes (").  Assume that double quotes are used for escaping commas, and there are no escaped double quotes within the fields themselves.
+
+*   **Example:**
+
+    *   Input:  `name,age,"city, state",occupation`
+    *   Expected Output: `['name', 'age', 'city, state', 'occupation']`
+
+*   **Solution:**
+
+```python
+import re
+
+def parse_csv_line(line):
+    """Parses a CSV line, handling basic quoted fields."""
+    parts = re.findall(r'(?:(?=([^"]*"[^"]*"))|(?:^|,))"([^"]*)"|([^,]+)', line)
+    result = []
+    for match in parts:
+        if match[1] or match[2]:
+            result.append(match[1] or match[2])
+        else:
+            result.append(match[3])
+    return result
+```
+
+**Problem 2:  Handling Escaped Double Quotes Inside Quoted Fields**
+
+*   **Problem Statement:** Extend the `parse_csv_line` function to handle CSV lines where double quotes inside quoted fields are escaped using another double quote (i.e., `""` represents a single double quote within the field).
+
+*   **Example:**
+
+    *   Input: `name,age,"address with ""double quotes""",occupation`
+    *   Expected Output: `['name', 'age', 'address with "double quotes"', 'occupation']`
+
+*   **Solution:**
+
+```python
+import re
+
+def parse_csv_line(line):
+    """Parses a CSV line, handling quoted fields with escaped double quotes."""
+    parts = re.findall(r'(?:(?=([^"]*"[^"]*"))|(?:^|,))"([^"]*)"|([^,]+)', line)
+    result = []
+    for match in parts:
+        if match[1] or match[2]:
+            result.append((match[1] or match[2]).replace('""', '"'))
+        else:
+            result.append(match[3])
+    return result
+```
+
+**Problem 3:  Handling Mixed Quoted and Unquoted Fields with Leading/Trailing Spaces**
+
+*   **Problem Statement:**  Enhance the `parse_csv_line` function to handle a mix of quoted and unquoted fields, and also handle potential leading/trailing spaces within unquoted fields *and* around the quotes themselves.  The result should have leading/trailing whitespace stripped from each field.
+
+*   **Example:**
+
+    *   Input:  ` name , " city , state " ,occupation  ,  "zip"`
+    *   Expected Output:  `['name', 'city , state', 'occupation', 'zip']`
+
+*   **Solution:**
+
+```python
+import re
+
+def parse_csv_line(line):
+    """Parses a CSV line, handling mixed quoted/unquoted fields with whitespace."""
+    parts = re.findall(r'(?:(?=([^"]*"[^"]*"))|(?:^|,))\s*"([^"]*)"\s*|\s*([^,]+)\s*', line)
+    result = []
+    for match in parts:
+        if match[1] or match[2]:
+            result.append((match[1] or match[2]).replace('""', '"'))
+        else:
+            result.append(match[3])
+    return result
+```
+
+**Explanation of the Solutions (using `re` module):**
+
+Each solution leverages Python's `re` (regular expression) module to handle the complexities of parsing CSV fields with quotes.  Here's a breakdown of the core regex used:
+
+`(?:(?=([^"]*"[^"]*"))|(?:^|,))"([^"]*)"|([^,]+)`
+
+*   **`(?:(?=([^"]*"[^"]*"))|(?:^|,))`**: This non-capturing group using lookahead ensures that each capturing group after is processed appropriately
+
+*   **`"([^"]*)"`**:  This part matches a quoted field:
+    *   `"`:  Matches a double quote.
+    *   `([^"]*)`:  Captures any characters *except* double quotes (zero or more occurrences) within the quotes. This is the actual field value.
+    *   `"`:  Matches the closing double quote.
+
+*   **`([^,]+)`**: This part matches an unquoted field:
+    *   `([^,]+)`: Captures any characters that are *not* commas (one or more occurrences). This is the field value.
+
+*   `|`:  The `|` acts as an "or," allowing the regex to match either a quoted field *or* an unquoted field.
+
+**Key Improvements and Considerations:**
+
+*   **Regular Expressions:**  Using regular expressions is a robust way to handle the varying formats of CSV data.  The regex patterns are designed to match quoted and unquoted fields correctly.
+*   **Escaped Double Quotes:** The solution for Problem 2 uses `.replace('""', '"')` to replace escaped double quotes with a single double quote within the captured field value.
+*   **Whitespace Handling:** Problem 3 uses `\s*` to match zero or more whitespace characters around the quotes and within unquoted fields. `strip()` is then used to remove leading/trailing whitespace.
+*   **Error Handling:**  These solutions do *not* include explicit error handling for malformed CSV lines (e.g., mismatched quotes).  In a production environment, you'd want to add error handling to gracefully handle such cases.
+*   **CSV Module:** For a truly robust and feature-rich CSV parsing solution, you should strongly consider using Python's built-in `csv` module.  It handles many edge cases and complexities that are difficult to manage with simple regular expressions.  However, these problems are designed to illustrate the fundamental challenges and demonstrate how to approach them manually.
+*   **Character Encodings:**  The solutions assume a standard character encoding (e.g., UTF-8).  If your CSV data uses a different encoding, you'll need to handle the decoding appropriately when reading the file.
+
+These examples should provide you with a good starting point for understanding how to parse CSV data with quoted fields and other common complexities.  Remember to thoroughly test your code with various CSV files to ensure it handles all your specific use cases correctly.

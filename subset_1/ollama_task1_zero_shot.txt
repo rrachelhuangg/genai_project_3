@@ -1,0 +1,1 @@
+ The `isEven` function in Java takes an integer `n` as input and returns its remainder when divided by 2. If the remainder is 0, the number is even; otherwise, it's odd. This method doesn't return a boolean value of "true" or "false," but rather the integer value of the remainder. 

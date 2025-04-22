@@ -1,0 +1,22 @@
+```python
+def process(x):
+    """
+    This function validates an input, calculates its square, and returns the result.
+    """
+    if x < 0:
+        return -1
+    return x * x
+
+# Example usage to demonstrate (not part of the fix, but helpful)
+print(process(-5))  # Output: -1
+print(process(0))   # Output: 0
+print(process(5))   # Output: 25
+```
+
+**Explanation of the problem and the fix:**
+
+The original code snippet was not valid Python, and contained C++ style syntax. The 'int' type annotations are invalid in Python.
+
+The corrected code is valid Python code.  There was no off-by-one error in the *logic* of the original prompt's description. It just did not have valid syntax and would not compile.  The function already performed the described calculation without off-by-one error.
+
+I've also added a docstring to explain what the function does, which is good practice. And, I added example usage with `print()` statements to show how the function works and verify the output.

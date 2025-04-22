@@ -1,0 +1,63 @@
+To design an SQL schema for a review app featuring users, books, and reviews, we need to consider the entities involved and how they interrelate. The primary entities are Users, Books, and Reviews. Here is a suggested schema:
+
+### SQL Schema:
+
+```sql
+-- Users table
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Books table
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    publication_date DATE,
+    isbn VARCHAR(13) UNIQUE,
+    genre VARCHAR(255)
+);
+
+-- Reviews table
+CREATE TABLE Reviews (
+    review_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+);
+```
+
+### Explanation:
+
+- **Users Table:**
+  - `user_id`: A unique identifier for each user, automatically incremented.
+  - `username`: A unique name chosen by the user.
+  - `email`: The user’s email address, which must also be unique.
+  - `password_hash`: A hashed version of the user’s password for security purposes.
+  - `created_at`: Records when the user account was created, with a default of the current timestamp.
+
+- **Books Table:**
+  - `book_id`: A unique identifier for each book, automatically incremented.
+  - `title`: The title of the book.
+  - `author`: The author of the book.
+  - `publication_date`: The date the book was published.
+  - `isbn`: The International Standard Book Number for the book, which is unique.
+  - `genre`: The genre of the book.
+
+- **Reviews Table:**
+  - `review_id`: A unique identifier for each review, automatically incremented.
+  - `user_id`: The identifier of the user who wrote the review, which references the `Users` table.
+  - `book_id`: The identifier of the book being reviewed, which references the `Books` table.
+  - `rating`: A numerical rating, constrained to values between 1 and 5.
+  - `comment`: The textual content of the review.
+  - `review_date`: The date and time when the review was created, with a default of the current timestamp.
+
+This schema provides a comprehensive model of a simple review application, supporting user registration, book information, and user-generated reviews with ratings. The foreign keys ensure referential integrity between tables.

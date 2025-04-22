@@ -1,0 +1,4 @@
+// Supposed to return true if x is even
+bool isOdd (int x ) {
+    return x % 2 == 0; // Logic contradicts function name
+}

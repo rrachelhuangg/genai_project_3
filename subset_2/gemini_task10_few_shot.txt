@@ -1,0 +1,9 @@
+The Python code provides three functions, each designed to validate a specific type of string input using regular expressions:
+
+1.  **`is_valid_phone_number(phone_number)`:** This function checks if a given string is a valid US phone number. It uses a regular expression to match various acceptable formats, including those with area codes in parentheses, hyphens, periods, and optional country codes. It returns `True` if the phone number matches the pattern and `False` otherwise.
+
+2.  **`is_valid_password(password)`:** This function validates a password based on complexity requirements.  It uses regular expressions with lookahead assertions to ensure the password has at least one uppercase letter, one lowercase letter, one digit, and one special character. The password must also be at least 8 characters long. It returns `True` if the password meets all criteria and `False` otherwise.
+
+3.  **`is_valid_url(url)`:** This function determines if a string is a valid URL. The regular expression checks for "http://" or "https://" at the beginning, followed by a domain name, a period, and a top-level domain.  It provides a basic URL validation and returns `True` if the URL matches the simplified pattern, and `False` otherwise. The function highlights that full URL validation can be very complex.
+
+All three functions rely on the `re` module for regular expression matching.  The `re.match()` function attempts to match the pattern at the beginning of the input string. The result of `re.match()` (a match object or `None`) is converted to a boolean value to indicate whether the validation was successful. The password validation uses lookahead assertions to enforce multiple criteria without consuming characters, making it possible to check for multiple conditions in a single regular expression. The explanation also details the regex syntax of all expressions.

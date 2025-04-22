@@ -1,0 +1,19 @@
+ import re from typing import List, Tuple
+
+def is\_valid\_email(email: str) -> bool:
+# Regular expression to match basic email addresses
+pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+if re.match(pattern, email):
+return True
+else:
+return False
+```scss
+# Example usage
+email1 = "example@example.com"
+email2 = "invalid_email"
+
+print(is_valid_email(email1))  # should print True
+print(is_valid_email(email2))  # should print False
+```
+# TODO : Create GET and POST endpoints using Ktor 

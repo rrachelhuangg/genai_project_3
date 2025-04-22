@@ -1,0 +1,14 @@
+ The given code is written in C, not Python. In C, the function signature should be `int process(int x)` instead of `int process(int x )`. Additionally, there's an off-by-one error in the conditional statement: the correct condition to check if the input is negative or zero is `if (x <= 0)`, since `x < 0` will only match negative numbers and not zero. Here's the corrected code in C:
+```c
+int process(int x) {
+    if (x <= 0) return -1;
+    return x * x ;
+}
+```
+In Python, the corrected function would look like this:
+```python
+def process(x):
+    if x <= 0:
+        return -1
+    return x ** 2
+``` 

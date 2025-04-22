@@ -1,0 +1,3 @@
+data class Product ( val id : Int , val name : String , val price : Double )
+
+// TODO : Create GET and POST endpoints using Ktor

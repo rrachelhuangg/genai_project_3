@@ -1,0 +1,3 @@
+-- TODO : Design schema with appropriate keys and constraints
+-- Tables : users (id , name ), books (id , title ), reviews (id , user_id , book_id ,
+   rating )

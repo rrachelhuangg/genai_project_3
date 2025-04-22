@@ -1,0 +1,84 @@
+**Problem 1: Safe Length Retrieval with Default Value**
+
+*   **Problem Description:**  Write a method `safeGetLength(String s, int defaultValue)` that returns the length of a string `s`. If `s` is `null`, it should return the provided `defaultValue` instead of throwing an exception.
+
+*   **Solution:**
+
+```java
+public class StringHelper {
+    public int safeGetLength(String s, int defaultValue) {
+        if (s == null) {
+            return defaultValue;
+        } else {
+            return s.length();
+        }
+    }
+}
+```
+
+*   **Explanation:** This solution directly addresses the null check. It uses an `if` statement to determine if `s` is `null`. If it is, it returns the specified `defaultValue`. Otherwise, it proceeds to return the length of the string.
+
+**Problem 2:  Length Comparison with Null Handling**
+
+*   **Problem Description:** Write a method `isLongerThan(String s1, String s2)` that compares the lengths of two strings, `s1` and `s2`.  The method should return `true` if `s1` is longer than `s2`, and `false` otherwise.  However, the method *must* handle the case where either `s1` or `s2` (or both) might be `null`.  A `null` string should be treated as having a length of 0.
+
+*   **Solution:**
+
+```java
+public class StringHelper {
+
+    public boolean isLongerThan(String s1, String s2) {
+        int len1 = (s1 == null) ? 0 : s1.length();
+        int len2 = (s2 == null) ? 0 : s2.length();
+
+        return len1 > len2;
+    }
+}
+```
+
+*   **Explanation:** This solution utilizes the ternary operator (`condition ? value_if_true : value_if_false`) for concisely handling the null checks.  It first determines the effective lengths of `s1` and `s2`, treating `null` as length 0. Then, it performs a simple comparison of these lengths and returns `true` if `s1`'s length is greater than `s2`'s length.
+
+**Problem 3:  String Concatenation with Length-Based Prefix**
+
+*   **Problem Description:**  Write a method `concatenateWithLengthPrefix(String s1, String s2)` that concatenates two strings, `s1` and `s2`.  The concatenation should be prefixed by the length of `s1`.  If `s1` is `null`, the prefix should be "0:".  If `s2` is `null`, treat it as an empty string ("").
+
+*   **Solution:**
+
+```java
+public class StringHelper {
+
+    public String concatenateWithLengthPrefix(String s1, String s2) {
+        String prefix;
+        if (s1 == null) {
+            prefix = "0:";
+        } else {
+            prefix = s1.length() + ":";
+        }
+
+        String safeS2 = (s2 == null) ? "" : s2;
+
+        return prefix + safeS2;
+    }
+}
+```
+
+*   **Explanation:**
+    *   The code first checks if `s1` is null. If it is, the prefix is set to "0:". Otherwise, it calculates the length of `s1` and creates the prefix string.
+    *   It then handles the possibility of `s2` being null by using a ternary operator. If `s2` is null, `safeS2` becomes an empty string.
+    *   Finally, it concatenates the prefix with `safeS2` and returns the result. This ensures that the method will always return a string, even if one or both of the input strings are null.
+
+**Key Improvements and Considerations:**
+
+*   **Null Safety:**  All solutions explicitly address the possibility of `NullPointerException` by checking for `null` values.
+*   **Clarity:** The code is written to be readable and easy to understand.
+*   **Efficiency:**  The solutions avoid unnecessary object creation or operations.
+*   **Error Handling (Alternative):** While these solutions handle `null` gracefully by treating it as a special case, an alternative approach in some situations would be to throw an `IllegalArgumentException` if `null` input is considered invalid. The best approach depends on the specific requirements of the application.  For example:
+
+```java
+public int getLength(String s) {
+    if (s == null) {
+        throw new IllegalArgumentException("String cannot be null");
+    }
+    return s.length();
+}
+```

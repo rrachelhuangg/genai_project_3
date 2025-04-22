@@ -1,0 +1,8 @@
+The Java method `isEven(n)` takes an integer `n` as input and returns the remainder of `n` divided by 2.  It determines whether the number is even or odd by using the modulo operator (`%`).
+
+Specifically, it returns:
+
+*   `0` if `n` is even (because `n % 2` will be 0).
+*   `1` if `n` is odd (because `n % 2` will be 1).
+
+**Important Note:** While the function *effectively* indicates whether a number is even or odd, it's important to note that **it returns an integer (0 or 1) and *not* a boolean (`true` or `false`)**. Although these values can be used in conditional statements, best practice is to use booleans for representing boolean values.

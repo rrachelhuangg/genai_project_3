@@ -1,0 +1,4 @@
+class Person :
+    def __init__ ( self ) :
+        # TODO : Add name , age , and optional email
+        pass

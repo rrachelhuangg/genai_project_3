@@ -1,0 +1,54 @@
+ To support quoted fields in the Python parser, you can follow these steps:
+
+1. Add support for quotes in the parser by checking if the current character is a quote and skipping it until it's closed. This will allow us to handle fields with quotes correctly.
+2. Modify the parsing code to handle quoted fields in the same way as unquoted fields. For example, if a field contains a quote, it should be treated as a string instead of a variable name.
+3. Add support for escaping quotes by adding a check for backslashes followed by quotes in the parser. This will allow us to handle fields with double quotes correctly.
+4. Modify the code that generates the JSON output to properly escape any quotes contained within the field values.
+
+Here's an example of how you can implement these changes:
+```
+import re
+
+class PythonParser:
+    def __init__(self):
+        self.tokens = []
+
+    def add_token(self, token):
+        self.tokens.append(token)
+
+    def parse(self):
+        # Parse the input string and return a list of tokens
+        self.parse_string("")
+
+    def parse_string(self, input_str):
+        # Check if the current character is a quote and skip it until it's closed
+        if input_str[0] in ['"', "'"]:
+            self.add_token(input_str[0])
+            index = 1
+            while index < len(input_str):
+                if input_str[index] == '\\':
+                    index += 2
+                elif input_str[index] in ['"', "'"]:
+                    self.add_token(input_str[index])
+                    index += 1
+                else:
+                    break
+            return
+        
+        # If we've reached the end of the input string, there are no more tokens to add
+        if len(input_str) == 0:
+            return
+    
+        # Check for a variable name or a function call
+        match = re.match(r"([a-zA-Z0-9_]+|[^a-zA-Z0-9_]+)\s*", input_str)
+        if match:
+            # If it's a variable name, add it as a token
+            self.add_token(match.group())
+        else:
+            # Otherwise, it's a function call or some other special syntax
+            # Add the input string as a single token
+            self.add_token(input_str)
+    
+        # Move to the next character in the input string
+        self.parse_string(input_str[match.end():])
+``` 

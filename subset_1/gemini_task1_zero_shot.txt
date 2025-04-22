@@ -1,0 +1,6 @@
+The Java method `isEven(n)` takes an integer `n` as input and returns the **remainder of `n` divided by 2.**  Crucially, it **does NOT return a boolean (true/false) value.** It returns either `0` or `1`.
+
+*   If `n` is even, `n % 2` will be `0`.
+*   If `n` is odd, `n % 2` will be `1`.
+
+Therefore, despite its name, the function does **not** actually determine if a number is even in the traditional boolean sense. It provides the remainder when divided by 2.

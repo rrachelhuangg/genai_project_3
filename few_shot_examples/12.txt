@@ -1,0 +1,104 @@
+**Problem 1: Calculate the Sum of Squares of the first n natural numbers**
+
+Write a function `sum_of_squares(n)` that calculates the sum of the squares of the first `n` natural numbers (1, 2, 3, ..., n).  For example, if `n = 3`, the function should return `1*1 + 2*2 + 3*3 = 14`.
+
+**Solution to Problem 1:**
+
+```python
+def sum_of_squares(n):
+    result = 0
+    for i in range(1, n + 1):  # Iterate from 1 to n (inclusive)
+        result += i * i
+    return result
+
+# Example Usage:
+print(sum_of_squares(3))  # Output: 14
+print(sum_of_squares(5))  # Output: 55
+```
+
+**Problem 2: Calculate the nth Fibonacci Number (Iteratively)**
+
+Write a function `fibonacci(n)` that calculates the nth Fibonacci number iteratively. The Fibonacci sequence starts with 0 and 1, and each subsequent number is the sum of the previous two.  So the sequence is 0, 1, 1, 2, 3, 5, 8, 13, ...  `fibonacci(0)` should return 0, `fibonacci(1)` should return 1, `fibonacci(2)` should return 1, `fibonacci(3)` should return 2, and so on.
+
+**Solution to Problem 2:**
+
+```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    a = 0
+    b = 1
+    for _ in range(2, n + 1):
+        c = a + b
+        a = b
+        b = c
+    return b
+
+# Example Usage:
+print(fibonacci(0))  # Output: 0
+print(fibonacci(1))  # Output: 1
+print(fibonacci(5))  # Output: 5
+print(fibonacci(10)) # Output: 55
+```
+
+**Problem 3: Calculate the Geometric Progression Sum**
+
+Write a function `geometric_sum(a, r, n)` that calculates the sum of the first `n` terms of a geometric progression.  The geometric progression is defined as: a, ar, ar^2, ar^3, ..., ar^(n-1).  The sum of the first n terms is:  a + ar + ar^2 + ... + ar^(n-1).
+
+**Solution to Problem 3:**
+
+```python
+def geometric_sum(a, r, n):
+    result = 0
+    for i in range(n):
+        result += a * (r ** i)
+    return result
+
+# Example Usage:
+print(geometric_sum(2, 3, 4))  # Output: 80 (2 + 6 + 18 + 54)
+print(geometric_sum(1, 0.5, 5)) # Output: 1.9375 (1 + 0.5 + 0.25 + 0.125 + 0.0625)
+```
+
+**Corrections and Improvements to the Original Factorial Code and Solution:**
+
+The original `factorial` function is *incorrect*.  It misses multiplying by `n`. The correct implementation is:
+
+```python
+def factorial(n):
+    result = 1
+    for i in range(1, n + 1):  # Corrected loop: iterate up to and including n
+        result *= i
+    return result
+
+# or
+
+def factorial_alternative(n):
+  if n == 0:
+    return 1
+  result = 1
+  for i in range (1,n+1):
+    result*= i
+  return result
+```
+
+**Explanation of Corrections:**
+
+*   **`range(1, n + 1)`:** The `range()` function in Python creates a sequence of numbers that *excludes* the upper bound.  To include `n` in the multiplication, the loop must iterate up to `n + 1`.  The original code only calculated up to `(n-1)`.
+
+**Corrected Problem 0: Recalculate factorial with Corrected Code**
+
+Write a function `factorial(n)` that calculates the factorial of a number *n* correctly.
+
+```python
+def factorial(n):
+  if n == 0:
+    return 1
+  result = 1
+  for i in range (1,n+1):
+    result*= i
+  return result
+
+print(factorial(5)) #120
+```
+
+The solutions provided are iterative, similar to the original (flawed) factorial code.  They all involve using a loop to accumulate a result based on a mathematical sequence.  I've also included examples of how to use each function and the expected outputs. I have also corrected the flawed factorial code.

@@ -1,0 +1,135 @@
+**Core Concept:** Each problem will involve creating a Flask route that takes a parameter (or parameters) and returns a JSON response.  We'll focus on simple calculations or data manipulation based on the input.
+
+**Problem 1: Simple Addition**
+
+*   **Description:** Create a route `/add/<int:num1>/<int:num2>` that takes two integer parameters, `num1` and `num2`, and returns a JSON response containing the sum of the two numbers.
+
+*   **Solution:**
+
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/greet/<username>')
+def greet(username):
+    return jsonify({'message': f'Hello, {username}!'})
+
+
+@app.route('/add/<int:num1>/<int:num2>')
+def add(num1, num2):
+    sum_result = num1 + num2
+    return jsonify({'sum': sum_result})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+*   **Explanation:**
+    *   `@app.route('/add/<int:num1>/<int:num2>')`: Defines the route that takes two integer parameters.  `<int:num1>` and `<int:num2>` specify that the URL parts should be treated as integers and passed as arguments to the `add` function.
+    *   `def add(num1, num2):`: Defines the function that handles the route.  It receives the two integer parameters.
+    *   `sum_result = num1 + num2`: Calculates the sum.
+    *   `return jsonify({'sum': sum_result})`: Returns a JSON response with a key named "sum" and the calculated sum as its value.
+
+**Problem 2: String Reversal**
+
+*   **Description:** Create a route `/reverse/<string:text>` that takes a string parameter `text` and returns a JSON response containing the reversed string.
+
+*   **Solution:**
+
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/greet/<username>')
+def greet(username):
+    return jsonify({'message': f'Hello, {username}!'})
+
+
+@app.route('/add/<int:num1>/<int:num2>')
+def add(num1, num2):
+    sum_result = num1 + num2
+    return jsonify({'sum': sum_result})
+
+
+@app.route('/reverse/<string:text>')
+def reverse_string(text):
+    reversed_text = text[::-1]  # Pythonic string reversal
+    return jsonify({'reversed': reversed_text})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+*   **Explanation:**
+    *   `@app.route('/reverse/<string:text>')`: Defines the route that takes a string parameter. `<string:text>` ensures that the URL part is treated as a string.
+    *   `def reverse_string(text):`: Defines the function that handles the route.
+    *   `reversed_text = text[::-1]`:  Reverses the string using slicing. `[::-1]` creates a reversed copy of the string.
+    *   `return jsonify({'reversed': reversed_text})`: Returns a JSON response with the reversed string.
+
+**Problem 3: Calculating the Area of a Rectangle**
+
+*   **Description:** Create a route `/area/<float:length>/<float:width>` that takes two float parameters, `length` and `width`, and returns a JSON response containing the calculated area of a rectangle.
+
+*   **Solution:**
+
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/greet/<username>')
+def greet(username):
+    return jsonify({'message': f'Hello, {username}!'})
+
+
+@app.route('/add/<int:num1>/<int:num2>')
+def add(num1, num2):
+    sum_result = num1 + num2
+    return jsonify({'sum': sum_result})
+
+
+@app.route('/reverse/<string:text>')
+def reverse_string(text):
+    reversed_text = text[::-1]  # Pythonic string reversal
+    return jsonify({'reversed': reversed_text})
+
+
+@app.route('/area/<float:length>/<float:width>')
+def calculate_area(length, width):
+    area = length * width
+    return jsonify({'area': area})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+*   **Explanation:**
+    *   `@app.route('/area/<float:length>/<float:width>')`: Defines the route, using `<float:length>` and `<float:width>` to specify that the URL parts should be treated as floating-point numbers.
+    *   `def calculate_area(length, width):`: Defines the function that handles the route.
+    *   `area = length * width`: Calculates the area.
+    *   `return jsonify({'area': area})`: Returns a JSON response with the calculated area.
+
+**How to Run These Solutions:**
+
+1.  **Save the code:** Save the complete code (including the `greet` route and all the added problems) as a Python file (e.g., `my_app.py`).
+
+2.  **Install Flask:**  If you don't have Flask installed, open your terminal and run:
+    ```bash
+    pip install Flask
+    ```
+
+3.  **Run the application:**  Open your terminal, navigate to the directory where you saved the file, and run:
+    ```bash
+    python my_app.py
+    ```
+
+4.  **Test the routes:**  Open your web browser and visit the following URLs (replace `username`, `num1`, `num2`, `text`, `length`, and `width` with appropriate values):
+
+    *   `http://127.0.0.1:5000/greet/Alice`
+    *   `http://127.0.0.1:5000/add/5/3`
+    *   `http://127.0.0.1:5000/reverse/hello`
+    *   `http://127.0.0.1:5000/area/4.5/2.0`
+
+You should see the JSON responses in your browser. Remember that `127.0.0.1:5000` is the default address and port for Flask's development server; it might be different on your system if you've configured it otherwise. Also, `debug=True` is useful during development because it provides detailed error messages and automatically reloads the server when you change the code.  Don't use `debug=True` in a production environment.

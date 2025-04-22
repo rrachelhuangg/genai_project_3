@@ -1,0 +1,91 @@
+**Problem 1: Factorial**
+
+*   **Description:** Calculate the factorial of a non-negative integer `n`. The factorial of `n` (denoted `n!`) is the product of all positive integers less than or equal to `n`.  For example, 5! = 5 * 4 * 3 * 2 * 1 = 120.  Define 0! = 1.  Implement this using recursion.
+
+*   **Code:**
+
+```python
+def factorial(n):
+    """
+    Calculates the factorial of n recursively.
+    """
+    if n == 0:
+        return 1  # Base case: 0! = 1
+    else:
+        return n * factorial(n - 1) # Recursive call
+```
+
+*   **Example Usage:**
+
+```python
+print(factorial(5))  # Output: 120
+print(factorial(0))  # Output: 1
+print(factorial(1))  # Output: 1
+```
+
+**Problem 2: Sum of Digits**
+
+*   **Description:** Given a non-negative integer `n`, calculate the sum of its digits using recursion.  For example, the sum of digits of 1234 is 1 + 2 + 3 + 4 = 10.
+
+*   **Code:**
+
+```python
+def sum_digits(n):
+    """
+    Calculates the sum of the digits of n recursively.
+    """
+    if n < 10:
+        return n # Base case: single digit
+    else:
+        return n % 10 + sum_digits(n // 10)  # Recursive call: Add last digit + sum of remaining digits
+```
+
+*   **Example Usage:**
+
+```python
+print(sum_digits(1234))  # Output: 10
+print(sum_digits(9))     # Output: 9
+print(sum_digits(999))   # Output: 27
+```
+
+**Problem 3: Power (Exponentiation)**
+
+*   **Description:** Calculate `base` raised to the power of `exponent` (base<sup>exponent</sup>) using recursion.  Assume the exponent is a non-negative integer.
+
+*   **Code:**
+
+```python
+def power(base, exponent):
+    """
+    Calculates base raised to the power of exponent recursively.
+    """
+    if exponent == 0:
+        return 1  # Base case: Any number raised to the power of 0 is 1
+    else:
+        return base * power(base, exponent - 1) # Recursive call: Multiply base by base^(exponent-1)
+```
+
+*   **Example Usage:**
+
+```python
+print(power(2, 3))   # Output: 8
+print(power(3, 0))   # Output: 1
+print(power(5, 2))   # Output: 25
+```
+
+**Explanation of Solutions and Similarities**
+
+All three problems (Factorial, Sum of Digits, and Power) share these characteristics with the Fibonacci sequence example:
+
+1.  **Recursion:**  They are all solved by breaking down a problem into smaller, self-similar subproblems.  Each function calls itself with a modified input.
+
+2.  **Base Case(s):**  Each function has one or more base cases that stop the recursion.  Without base cases, the functions would call themselves infinitely, leading to a stack overflow error. The base cases provide the simplest possible solution for a small input, allowing the recursion to eventually "unwind" and return a result.
+
+3.  **Recursive Step:** The `else` block in each function contains the recursive step.  This is where the function calls itself with a modified input.  The modification is designed to move the input closer to the base case.
+
+4.  **Well-Defined:** All problems can be clearly defined using a recursive relationship.  For example:
+    *   `factorial(n) = n * factorial(n-1)`
+    *   `sum_digits(n) = (n % 10) + sum_digits(n // 10)`
+    *   `power(base, exponent) = base * power(base, exponent-1)`
+
+These similarities make them suitable problems for practicing recursive thinking and implementation. They provide a good range of scenarios (mathematical function, digit manipulation, exponentiation) to solidify understanding of recursion fundamentals. Note that while these examples are good for learning recursion, they are not necessarily the *most efficient* way to solve these problems (iteration might be preferred for performance in some cases). However, they clearly demonstrate the recursive concept.

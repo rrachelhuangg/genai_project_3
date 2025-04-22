@@ -1,0 +1,314 @@
+**Problem 1: Managing a List of Books**
+
+Data Class:
+
+```kotlin
+data class Book(val id: Int, val title: String, val author: String, val isbn: String)
+```
+
+Goal: Create GET and POST endpoints using Ktor to manage a list of `Book` objects.
+
+**Problem 2: Managing a List of Students**
+
+Data Class:
+
+```kotlin
+data class Student(val id: Int, val name: String, val grade: Int, val major: String)
+```
+
+Goal: Create GET and POST endpoints using Ktor to manage a list of `Student` objects.
+
+**Problem 3: Managing a List of Movies**
+
+Data Class:
+
+```kotlin
+data class Movie(val id: Int, val title: String, val director: String, val year: Int)
+```
+
+Goal: Create GET and POST endpoints using Ktor to manage a list of `Movie` objects.
+
+**Solutions (using Ktor):**
+
+I'll provide a single, more complete example solution that can be easily adapted for each of the three problems.  I'll use the `Product` data class from your original prompt.
+
+```kotlin
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+
+@Serializable
+data class Product(val id: Int, val name: String, val price: Double)
+
+// In-memory data store (for simplicity - replace with a database in a real application)
+val products = mutableListOf(
+    Product(1, "Laptop", 1200.0),
+    Product(2, "Mouse", 25.0),
+    Product(3, "Keyboard", 75.0)
+)
+
+fun main() {
+    embeddedServer(Netty, port = 8080) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+
+        routing {
+            get("/products") {
+                call.respond(products)
+            }
+
+            get("/products/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                    return@get
+                }
+                val product = products.find { it.id == id }
+                if (product == null) {
+                    call.respond(HttpStatusCode.NotFound, "Product not found")
+                } else {
+                    call.respond(product)
+                }
+            }
+
+            post("/products") {
+                try {
+                    val product = call.receive<Product>()
+                    //Simple validation to prevent duplicate ids
+                    if(products.any{it.id == product.id}){
+                         call.respond(HttpStatusCode.BadRequest, "Product ID already exists")
+                         return@post
+                    }
+
+                    products.add(product)
+                    call.respond(HttpStatusCode.Created, product) // Respond with the created product
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid product data")
+                    println("Exception while creating a product: ${e.message}") //good to add logging.
+                }
+            }
+
+            put("/products/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                    return@put
+                }
+
+                try {
+                    val updatedProduct = call.receive<Product>()
+                    val index = products.indexOfFirst { it.id == id }
+
+                    if (index == -1) {
+                        call.respond(HttpStatusCode.NotFound, "Product not found")
+                    } else {
+                        products[index] = updatedProduct
+                        call.respond(HttpStatusCode.OK, updatedProduct)
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid product data")
+                }
+            }
+
+
+            delete("/products/{id}") {
+                 val id = call.parameters["id"]?.toIntOrNull()
+                 if (id == null) {
+                     call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                     return@delete
+                 }
+
+                 val initialSize = products.size
+                 products.removeIf { it.id == id }
+                 if (products.size == initialSize) {
+                     call.respond(HttpStatusCode.NotFound, "Product not found")
+                 } else {
+                     call.respond(HttpStatusCode.NoContent) // 204 No Content - indicates success
+                 }
+             }
+        }
+    }.start(wait = true)
+}
+```
+
+**Explanation and Adapting to Other Problems:**
+
+1.  **Dependencies:**  You'll need to add the necessary Ktor dependencies to your `build.gradle.kts` file:
+
+    ```kotlin
+    dependencies {
+        implementation("io.ktor:ktor-server-netty:2.3.7") // or the latest version
+        implementation("io.ktor:ktor-server-content-negotiation:2.3.7")
+        implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+        implementation("ch.qos.logback:logback-classic:1.2.10") //for logging
+        testImplementation("io.ktor:ktor-server-tests:2.3.7") // or the latest version
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
+    }
+    ```
+
+    Make sure to replace `2.3.7` with the latest stable Ktor version if necessary.  Also, this example uses `logback` for logging.  You can remove that if you don't need it.
+
+2.  **Serialization:**  The `kotlinx.serialization` library is used to convert Kotlin objects to JSON and back. The `@Serializable` annotation is crucial for this.  Add the `kotlinx.serialization` plugin to your `build.gradle.kts`:
+
+    ```kotlin
+    plugins {
+        kotlin("jvm") version "1.9.22" // or your Kotlin version
+        kotlin("plugin.serialization") version "1.9.22"
+        id("io.ktor.plugin") version "2.3.7"
+    }
+
+    kotlin {
+        sourceSets["main"].dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+        }
+    }
+    ```
+
+3.  **Data Storage:** The `products` variable (in the example) is a simple in-memory list.  **This is not suitable for production.**  You would replace this with a database (e.g., PostgreSQL, MySQL, MongoDB) and use a library like Exposed or an ORM to interact with it.
+
+4.  **Ktor Setup:**
+
+    *   `embeddedServer`: Starts the Ktor server.
+    *   `install(ContentNegotiation)`: Configures Ktor to use JSON serialization.  The `json()` block allows you to customize the JSON serializer (e.g., for pretty printing).
+    *   `routing`: Defines the routes for your API.
+
+5.  **Endpoints:**
+
+    *   `GET /products`: Returns the entire list of products.
+    *   `GET /products/{id}`: Returns a specific product by ID.  Uses `call.parameters["id"]` to get the ID from the URL.  Includes error handling for invalid or missing IDs.
+    *   `POST /products`: Creates a new product.  Uses `call.receive<Product>()` to receive the JSON data from the request body and convert it to a `Product` object.  Includes error handling for invalid data. Responds with status code 201 (Created) and the created product.
+    *   `PUT /products/{id}`: Updates an existing product by ID. Similar to POST, but finds the product to update.
+    *  `DELETE /products/{id}`: Deletes a product by ID.
+
+6.  **Error Handling:**  The example includes basic error handling (e.g., checking for null IDs, handling invalid data).  More robust error handling (logging, custom exceptions) is important in a real application.
+
+7. **Adapting:** To adapt this to the other problems, you would:
+
+    *   Replace the `Product` data class with `Book`, `Student`, or `Movie`, as defined in the problem descriptions.
+    *   Change the list name from `products` to `books`, `students`, or `movies`, respectively.
+    *   Update the route paths to reflect the new resource (e.g., `/books`, `/students`, `/movies`).
+    *   Modify any validation logic as needed (e.g., validate the `grade` field in the `Student` data class).
+
+**Example Adaptation (Books):**
+
+Here's how you would adapt the solution for the `Book` problem:
+
+```kotlin
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
+import kotlinx.serialization.Serializable
+import io.ktor.http.*
+import kotlinx.serialization.json.Json
+
+@Serializable
+data class Book(val id: Int, val title: String, val author: String, val isbn: String)
+
+// In-memory data store for books
+val books = mutableListOf(
+    Book(1, "The Lord of the Rings", "J.R.R. Tolkien", "978-0618260221"),
+    Book(2, "Pride and Prejudice", "Jane Austen", "978-0141439518")
+)
+
+fun main() {
+    embeddedServer(Netty, port = 8080) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+
+        routing {
+            get("/books") {
+                call.respond(books)
+            }
+
+            get("/books/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                    return@get
+                }
+                val book = books.find { it.id == id }
+                if (book == null) {
+                    call.respond(HttpStatusCode.NotFound, "Book not found")
+                } else {
+                    call.respond(book)
+                }
+            }
+
+            post("/books") {
+                try {
+                    val book = call.receive<Book>()
+                    if(books.any{it.id == book.id}){
+                         call.respond(HttpStatusCode.BadRequest, "Book ID already exists")
+                         return@post
+                    }
+                    books.add(book)
+                    call.respond(HttpStatusCode.Created, book)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid book data")
+                }
+            }
+
+             put("/books/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                    return@put
+                }
+
+                try {
+                    val updatedBook = call.receive<Book>()
+                    val index = books.indexOfFirst { it.id == id }
+
+                    if (index == -1) {
+                        call.respond(HttpStatusCode.NotFound, "Book not found")
+                    } else {
+                        books[index] = updatedBook
+                        call.respond(HttpStatusCode.OK, updatedBook)
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid book data")
+                }
+            }
+
+
+             delete("/books/{id}") {
+                 val id = call.parameters["id"]?.toIntOrNull()
+                 if (id == null) {
+                     call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                     return@delete
+                 }
+
+                 val initialSize = books.size
+                 books.removeIf { it.id == id }
+                 if (books.size == initialSize) {
+                     call.respond(HttpStatusCode.NotFound, "Book not found")
+                 } else {
+                     call.respond(HttpStatusCode.NoContent) // 204 No Content - indicates success
+                 }
+             }
+        }
+    }.start(wait = true)
+}
+```

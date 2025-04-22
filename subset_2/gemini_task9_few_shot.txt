@@ -1,0 +1,260 @@
+Okay, I will provide you with a Kotlin and Ktor code example that creates a REST API. This API will expose endpoints related to prime numbers, and will include error handling and proper HTTP status codes.
+
+**1. Dependencies (build.gradle.kts or build.gradle)**
+
+First, add the necessary Ktor dependencies to your project's `build.gradle.kts` (Kotlin DSL) or `build.gradle` (Groovy DSL) file:
+
+```kotlin
+// build.gradle.kts (Kotlin DSL)
+
+plugins {
+    kotlin("jvm") version "1.9.22"
+    id("io.ktor.plugin") version "2.3.10" // Use the latest version
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.ktor:ktor-server-core-jvm:2.3.10") // Use the latest version
+    implementation("io.ktor:ktor-server-netty-jvm:2.3.10")
+    implementation("ch.qos.logback:logback-classic:1.4.14") // Logging
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.10") // For JSON serialization
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.10")  // JSON support
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.3.10")
+    testImplementation("io.ktor:ktor-server-tests-jvm:2.3.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
+
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("my-app.jar") // Adjust as needed
+    }
+}
+```
+
+If you're using Groovy, the equivalent `build.gradle` would be:
+
+```groovy
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'io.ktor.plugin' version '2.3.10'  // Use the latest version
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "io.ktor:ktor-server-core-jvm:2.3.10" // Use the latest version
+    implementation "io.ktor:ktor-server-netty-jvm:2.3.10"
+    implementation "ch.qos.logback:logback-classic:1.4.14" // Logging
+    implementation "io.ktor:ktor-server-content-negotiation-jvm:2.3.10" // For JSON serialization
+    implementation "io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.10"  // JSON support
+    implementation "io.ktor:ktor-server-status-pages-jvm:2.3.10"
+    testImplementation "io.ktor:ktor-server-tests-jvm:2.3.10"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.22"
+
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("my-app.jar") // Adjust as needed
+    }
+}
+```
+
+Make sure to refresh your Gradle project after adding these dependencies.
+
+**2. Kotlin Code (src/main/kotlin/Main.kt)**
+
+```kotlin
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.http.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.*
+import io.ktor.server.plugins.statuspages.*
+
+@Serializable
+data class PrimeCheckRequest(val number: Int)
+
+@Serializable
+data class PrimeCheckResponse(val number: Int, val isPrime: Boolean)
+
+fun main() {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        install(ContentNegotiation) {
+            json()
+        }
+
+        install(StatusPages) {
+            exception<Throwable> { call, cause ->
+                call.respondText(text = "500: Internal Server Error: ${cause.message}" , status = HttpStatusCode.InternalServerError)
+                throw cause
+            }
+        }
+
+        routing {
+            get("/") {
+                call.respondText("Prime Number API - Try /isPrime with a number")
+            }
+
+            post("/isPrime") {
+                try {
+                    val request = call.receive<PrimeCheckRequest>()
+                    val number = request.number
+
+                    if (number < 0) {
+                        call.respond(HttpStatusCode.BadRequest, "Number must be non-negative.")
+                        return@post
+                    }
+
+                    val isPrime = isPrime(number)
+                    val response = PrimeCheckResponse(number = number, isPrime = isPrime)
+                    call.respond(response)
+
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid request format or missing 'number' field.")
+                }
+            }
+
+            get("/isPrime/{number}") {  // Added GET endpoint
+                try {
+                    val numberParam = call.parameters["number"] ?: throw IllegalArgumentException("Missing 'number' parameter")
+                    val number = numberParam.toInt()
+
+                    if (number < 0) {
+                        call.respond(HttpStatusCode.BadRequest, "Number must be non-negative.")
+                        return@get
+                    }
+
+                    val isPrime = isPrime(number)
+                    val response = PrimeCheckResponse(number = number, isPrime = isPrime)
+                    call.respond(response)
+
+                } catch (e: NumberFormatException) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid number format.")
+                } catch (e: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Invalid request.")
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Internal server error.")
+                }
+            }
+        }
+    }.start(wait = true)
+}
+
+fun isPrime(n: Int): Boolean {
+    if (n <= 1) {
+        return false
+    }
+    for (i in 2..kotlin.math.sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) {
+            return false
+        }
+    }
+    return true
+}
+```
+
+**Explanation:**
+
+1.  **Dependencies:**  We include the necessary Ktor modules for server setup, JSON serialization, logging, and status pages.
+
+2.  **Data Classes:**
+    *   `PrimeCheckRequest`:  Represents the incoming request containing the number to check.  It's a Kotlin `data class` and is marked with `@Serializable` so that `kotlinx.serialization` can convert JSON to/from this class.
+    *   `PrimeCheckResponse`: Represents the response containing the original number and whether it's prime.  It's also a `data class` and `@Serializable`.
+
+3.  **`main()` Function:**
+    *   `embeddedServer`: Starts the Ktor server using Netty as the engine.  It listens on port 8080 and host "0.0.0.0" (all interfaces).
+    *   `install(ContentNegotiation)`:  Installs the `ContentNegotiation` feature, allowing Ktor to automatically serialize and deserialize JSON. We configure it to use `kotlinx.serialization.json`.
+    *    `install(StatusPages)`: Adds a global exception handler.  Any uncaught `Throwable` will be caught, logged, and a 500 Internal Server Error response will be sent to the client. This helps in providing graceful error handling.
+
+4.  **`routing` Block:** Defines the API endpoints.
+    *   `get("/")`:  A simple endpoint that returns a welcome message.
+    *   `post("/isPrime")`:
+        *   `call.receive<PrimeCheckRequest>()`:  Reads the request body and deserializes it into a `PrimeCheckRequest` object.  If the JSON is invalid, it will throw an exception, which is caught in the `catch` block.
+        *   Input validation: Check if the number is negative and returns a `BadRequest` if so.
+        *   Calls the `isPrime()` function to check if the number is prime.
+        *   Creates a `PrimeCheckResponse` object and sends it back to the client as JSON.
+        *   Error Handling: A `try...catch` block handles potential exceptions during request processing.  If an exception occurs, a `BadRequest` status code is returned with an error message.
+    *    `get("/isPrime/{number}")`:  This is a GET endpoint that takes the number as a path parameter.
+        *   `call.parameters["number"]`: Gets the number from the URL path.
+        *   Uses a `try...catch` block to handle potential errors like missing or invalid number parameters.
+        *   Returns a `PrimeCheckResponse` object as JSON.
+
+5.  **`isPrime()` Function:** The same prime number checking function you provided.
+
+**How to Run:**
+
+1.  **Build the project:** Use Gradle to build the project (e.g., `./gradlew build`).
+2.  **Run the application:**  Run the generated JAR file (e.g., `java -jar build/libs/your-project-name.jar`).  You can also run it from your IDE.
+
+**How to Test (using curl):**
+
+*   **POST Request:**
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"number": 17}' http://localhost:8080/isPrime
+```
+
+Expected Response:
+
+```json
+{"number":17,"isPrime":true}
+```
+
+*   **GET Request:**
+
+```bash
+curl http://localhost:8080/isPrime/23
+```
+
+Expected Response:
+
+```json
+{"number":23,"isPrime":true}
+```
+
+*   **Error Handling:**
+    *   Invalid JSON (POST):
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"number": "abc"}' http://localhost:8080/isPrime
+```
+
+Response (status code 400): `Invalid request format or missing 'number' field.`
+
+    *   Negative Number (GET):
+
+```bash
+curl http://localhost:8080/isPrime/-5
+```
+
+Response (status code 400): `Number must be non-negative.`
+
+**Key Improvements and Best Practices:**
+
+*   **Content Negotiation:** Uses `ContentNegotiation` to automatically handle JSON serialization/deserialization, making the code cleaner.
+*   **Data Classes:** Uses Kotlin data classes to represent the request and response, providing a concise and type-safe way to work with data.
+*   **Error Handling:**  Includes `try...catch` blocks to handle potential exceptions and return appropriate HTTP status codes (e.g., 400 Bad Request, 500 Internal Server Error).
+*   **HTTP Status Codes:**  Returns meaningful HTTP status codes to indicate the success or failure of the request.
+*   **Input Validation:**  Validates the input to ensure that it's within the expected range (non-negative numbers).
+*   **Separate GET and POST:** Uses separate endpoints for GET (with a path parameter) and POST (with a request body) to provide flexibility in how clients can interact with the API.
+*   **GET with Path Parameter:** The `GET /isPrime/{number}` endpoint demonstrates how to use path parameters in Ktor.
+*   **Status Pages:** Installs the `StatusPages` plugin to provide a global exception handler.
+
+This example provides a solid foundation for building REST APIs with Kotlin and Ktor, including best practices for data handling, error handling, and API design. Remember to adapt the code and add more features to meet your specific requirements.

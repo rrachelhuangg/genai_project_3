@@ -1,0 +1,60 @@
+**Problem 1: Find the First N Prime Numbers**
+
+Write a function `find_first_n_primes(n)` that takes an integer `n` as input and returns a list containing the first `n` prime numbers.  Use the `is_prime` function to help determine if a number is prime.
+
+**Problem 2: Prime Factorization**
+
+Write a function `prime_factorization(n)` that takes an integer `n` greater than 1 as input and returns a list of its prime factors. The list should contain the prime factors in ascending order, and should contain each prime factor with the correct multiplicity (e.g., `prime_factorization(12)` should return `[2, 2, 3]`).  Use the `is_prime` function to check for primality.
+
+**Problem 3:  Prime Number Range**
+
+Write a function `prime_range(start, end)` that takes two integers, `start` and `end`, as input and returns a list containing all the prime numbers within the inclusive range of `start` to `end`. Use the `is_prime` function.  Handle the case where `start` is greater than `end` by returning an empty list.
+
+**Solutions:**
+
+```python
+# Original is_prime function (copied for completeness)
+def is_prime(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+
+
+# Solution for Problem 1: Find the First N Prime Numbers
+def find_first_n_primes(n):
+    primes = []
+    num = 2
+    while len(primes) < n:
+        if is_prime(num):
+            primes.append(num)
+        num += 1
+    return primes
+
+
+# Solution for Problem 2: Prime Factorization
+def prime_factorization(n):
+    factors = []
+    i = 2
+    while i * i <= n:  # Optimization: Only need to check up to the square root
+        while n % i == 0:
+            factors.append(i)
+            n //= i
+        i += 1
+    if n > 1:  # Remaining n is a prime factor (if any)
+        factors.append(n)
+    return factors
+
+
+# Solution for Problem 3: Prime Number Range
+def prime_range(start, end):
+    if start > end:
+        return []  # Handle invalid range
+    primes = []
+    for num in range(start, end + 1):
+        if is_prime(num):
+            primes.append(num)
+    return primes

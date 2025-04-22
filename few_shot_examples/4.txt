@@ -1,0 +1,128 @@
+**Problem 1: Validate a Phone Number**
+
+*   **Problem Description:** Write a function `is_valid_phone_number(phone_number)` that takes a string `phone_number` as input and returns `True` if it's a valid US phone number, and `False` otherwise. A valid US phone number can have the following formats:
+
+    *   `123-456-7890`
+    *   `(123) 456-7890`
+    *   `1234567890`
+    *   `123.456.7890`
+    *   `+1 123-456-7890`
+    *   `1 123-456-7890`
+
+*   **Solution:**
+
+```python
+import re
+
+def is_valid_phone_number(phone_number):
+    """
+    Checks if a string is a valid US phone number.
+    """
+    pattern = r"^(\+1\s?)?(\d{3}|\(\d{3}\))?[\s\.-]?(\d{3})[\s\.-]?(\d{4})$"
+    match = re.match(pattern, phone_number)
+    return bool(match)
+
+# Example Usage
+print(is_valid_phone_number("123-456-7890"))       # True
+print(is_valid_phone_number("(123) 456-7890"))     # True
+print(is_valid_phone_number("1234567890"))         # True
+print(is_valid_phone_number("123.456.7890"))         # True
+print(is_valid_phone_number("+1 123-456-7890"))    # True
+print(is_valid_phone_number("1 123-456-7890"))    # True
+print(is_valid_phone_number("123-456-789"))        # False
+print(is_valid_phone_number("abc-def-ghij"))       # False
+```
+
+**Problem 2: Validate a Password**
+
+*   **Problem Description:** Write a function `is_valid_password(password)` that takes a string `password` as input and returns `True` if it's a valid password, and `False` otherwise.  A valid password must meet the following criteria:
+
+    *   At least 8 characters long.
+    *   Contains at least one uppercase letter.
+    *   Contains at least one lowercase letter.
+    *   Contains at least one digit.
+    *   Contains at least one special character (e.g., !, @, #, $, %, ^, &, *).
+
+*   **Solution:**
+
+```python
+import re
+
+def is_valid_password(password):
+    """
+    Checks if a password meets specific complexity requirements.
+    """
+    pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$"
+    match = re.match(pattern, password)
+    return bool(match)
+
+# Example Usage
+print(is_valid_password("P@sswOrd1"))         # True
+print(is_valid_password("Short"))              # False
+print(is_valid_password("NoUppercase123!"))   # False
+print(is_valid_password("N0SpecialChar"))     # False
+print(is_valid_password("JustLowercase"))    # False
+print(is_valid_password("ALLUPPERCASE"))    # False
+print(is_valid_password("12345678"))    # False
+```
+
+**Problem 3: Validate a URL**
+
+*   **Problem Description:** Write a function `is_valid_url(url)` that takes a string `url` as input and returns `True` if it's a valid URL, and `False` otherwise. A valid URL should start with `http://` or `https://` and have a domain name, a period, and a top-level domain (e.g., .com, .org, .net).
+
+*   **Solution:**
+
+```python
+import re
+
+def is_valid_url(url):
+    """
+    Checks if a string is a valid URL.
+    """
+    pattern = r"^(http(s)?:\/\/)([a-zA-Z0-9.-]+)(\.[a-zA-Z]{2,})$"  # Simplified for brevity
+    match = re.match(pattern, url)
+    return bool(match)
+
+# Example Usage
+print(is_valid_url("https://www.example.com"))   # True
+print(is_valid_url("http://example.org"))      # True
+print(is_valid_url("ftp://example.com"))       # False
+print(is_valid_url("www.example.com"))          # False
+print(is_valid_url("http://example"))         # False
+```
+
+**Explanation of Solutions:**
+
+*   **Import `re`:** All solutions start by importing the `re` module, which provides regular expression operations.
+*   **`re.match(pattern, string)`:** The `re.match()` function attempts to match the regular expression pattern at the *beginning* of the string.  If a match is found, it returns a match object; otherwise, it returns `None`.
+*   **`bool(match)`:**  We convert the match object to a boolean.  A match object is truthy (evaluates to `True`), and `None` is falsy (evaluates to `False`).  This provides a simple way to return `True` if the string matches the pattern and `False` otherwise.
+
+**Explanation of Regular Expressions:**
+
+*   **Phone Number:**
+    *   `^`: Matches the beginning of the string.
+    *   `(\+1\s?)?`: Optionally matches "+1" followed by optional whitespace.  `?` makes the group optional.
+    *   `(\d{3}|\(\d{3}\))?`: Optionally matches either three digits or three digits enclosed in parentheses.  `|` means "or".
+    *   `[\s\.-]?`:  Optionally matches a single whitespace character, period, or hyphen.  `[]` defines a character class.
+    *   `(\d{3})`: Matches three digits.
+    *   `[\s\.-]?`: Optionally matches a single whitespace character, period, or hyphen.
+    *   `(\d{4})`: Matches four digits.
+    *   `$`: Matches the end of the string.
+
+*   **Password:**
+    *   `^`: Matches the beginning of the string.
+    *   `(?=.*[a-z])`:  Positive lookahead assertion.  It asserts that at least one lowercase letter exists *somewhere* in the string.  It doesn't consume any characters.
+    *   `(?=.*[A-Z])`:  Positive lookahead assertion.  It asserts that at least one uppercase letter exists *somewhere* in the string.
+    *   `(?=.*\d)`: Positive lookahead assertion.  It asserts that at least one digit exists *somewhere* in the string.
+    *   `(?=.*[!@#$%^&*])`: Positive lookahead assertion. It asserts that at least one special character exists *somewhere* in the string.
+    *   `[a-zA-Z\d!@#$%^&*]{8,}`: Matches any combination of lowercase letters, uppercase letters, digits, and special characters, with a minimum length of 8 characters.
+    *   `$`: Matches the end of the string.
+
+*   **URL:**
+    *   `^`: Matches the beginning of the string.
+    *   `(http(s)?:\/\/)`: Matches "http://" or "https://". The `?` makes the "s" optional.
+    *   `([a-zA-Z0-9.-]+)`: Matches one or more alphanumeric characters, periods, or hyphens (the domain name).
+    *   `(\.[a-zA-Z]{2,})`: Matches a period followed by two or more alphabetic characters (the top-level domain).
+    *   `$`: Matches the end of the string.
+
+Remember to adapt these regular expressions and validation criteria to your specific requirements. Also, note that URL validation can be *extremely* complex, and the provided example is a simplified version.  More robust URL validation might involve more sophisticated patterns or using external libraries.
