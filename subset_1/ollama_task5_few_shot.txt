@@ -1,1 +1,4 @@
- This Python script reads a CSV file using the `csv` module, skips the header row, and then calculates the total and average values of a specific column (index 1) in the data. The script then prints out these values. 
+ @app . route (’/ add / < int:num1 > / < int:num2 >’)
+def add ( num1 , num2 ):
+# TODO : Calculate the sum of two numbers and return a JSON response with the result
+pass 

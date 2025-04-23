@@ -1,0 +1,48 @@
+To design an SQL schema for a review application with users, books, and reviews, we need to define tables with appropriate keys and constraints. The schema will include tables for users, books, and reviews, with the necessary relationships between them.
+
+Below is an example SQL schema:
+
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE reviews (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),  -- Assuming rating is on a scale of 1 to 5
+    review_text TEXT,  -- Optional column for textual reviews
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Optional for storing when the review was created
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    UNIQUE (user_id, book_id)  -- To ensure a user can only review a specific book once
+);
+```
+
+### Explanation:
+
+1. **users table:**
+   - `id`: A unique identifier for each user, using `SERIAL` to auto-increment this value.
+   - `name`: The name of the user, stored as a `VARCHAR`.
+
+2. **books table:**
+   - `id`: A unique identifier for each book, using `SERIAL`.
+   - `title`: The title of the book.
+
+3. **reviews table:**
+   - `id`: A unique identifier for each review, using `SERIAL`.
+   - `user_id`: A foreign key that references the `users` table, linking a review to a user.
+   - `book_id`: A foreign key that references the `books` table, linking a review to a book.
+   - `rating`: An integer representing the user's rating of the book, with a constraint to ensure it is between 1 and 5.
+   - `review_text`: Optional, for additional comments or description.
+   - `review_date`: Optional, to store the timestamp of when the review was created, with a default value of the current timestamp.
+   - Foreign key constraints are used to enforce referential integrity.
+   - A `UNIQUE` constraint on `(user_id, book_id)` ensures that each user can only submit one review per book.
+   - `ON DELETE CASCADE` is used in the foreign key constraints to automatically delete reviews when the associated user or book is deleted.

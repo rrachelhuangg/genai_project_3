@@ -1,0 +1,37 @@
+To generate the given Python code step-by-step, you can use the following prompt:
+
+---
+
+**Prompt:**
+
+Let's write a Python function to check if a number is prime.
+
+Step 1: Define the function.
+
+```python
+# This function checks if a number is prime
+def is_prime(n):
+```
+
+Step 2: Handle base cases. Remember that numbers less than or equal to 1 are not prime.
+
+```python
+    if n <= 1:
+        return False
+```
+
+Step 3: Check for factors from 2 up to the square root of n. If a factor is found, the number is not prime.
+
+```python
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+```
+
+Step 4: If no factors are found, return True because the number is prime.
+
+```python
+    return True
+```
+
+Combine all steps to complete the function definition.

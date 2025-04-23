@@ -1,0 +1,50 @@
+ Sure, let's go through this step by step. The first thing to note is that the Fibonacci sequence is defined as follows:
+
+* fibonacci(0) = 0
+* fibonacci(1) = 1
+* fibonacci(n) = fibonacci(n-1) + fibonacci(n-2) for n > 1
+
+So, the base cases are:
+```python
+def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        # recursive call and addition
+        pass
+```
+The next step is to make the recursive call and add the results of the two previous Fibonacci numbers. We can do this using the following line of code:
+```python
+return fibonacci(n-1) + fibonacci(n-2)
+```
+This will call the function twice with n-1 and n-2 as arguments, and return their sum. However, we need to make sure that we don't go beyond the first two cases of 0 and 1. We can do this using an if statement:
+```python
+def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        # base case for recursive call
+        if n < 2:
+            return fibonacci(2) - 1
+        else:
+            return fibonacci(n-1) + fibonacci(n-2)
+```
+Now, we have defined the base cases and made the recursive call with appropriate checks. The final function should look like this:
+```python
+def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        # base case for recursive call
+        if n < 2:
+            return fibonacci(2) - 1
+        else:
+            return fibonacci(n-1) + fibonacci(n-2)
+```
+This function will now correctly compute the Fibonacci sequence up to and including n. 

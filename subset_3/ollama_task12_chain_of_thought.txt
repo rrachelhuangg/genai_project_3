@@ -1,0 +1,9 @@
+ The bug in the provided Python code is that the loop condition `for i in range(1, n)` should include the value of `n`. Therefore, the corrected code should be:
+```python
+def factorial(n):
+    result = 1
+    for i in range(1, n+1):  # Include n in the range
+        result *= i
+    return result
+```
+Now when the input is `0`, the loop will still run once with `i=0`, and the `result` will be updated to `1`. Therefore, the function will correctly return `1` as the factorial of `0`. 

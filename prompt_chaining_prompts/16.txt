@@ -1,0 +1,68 @@
+Prompt 1 Results: 
+**What is a Binary Search?**
+
+A binary search is a highly efficient algorithm for finding a specific element (the "target") within a *sorted* array (or list). It operates by repeatedly dividing the search interval in half. Here's the general idea:
+
+1. **Start in the Middle:**  You begin by examining the middle element of the sorted array.
+
+2. **Compare:**
+   - If the middle element is equal to the target, you've found it!  The search is complete.
+   - If the middle element is *greater* than the target, you know the target (if it exists) must be in the *left half* of the array.  You discard the right half and repeat the search on the left half.
+   - If the middle element is *less* than the target, you know the target (if it exists) must be in the *right half* of the array. You discard the left half and repeat the search on the right half.
+
+3. **Repeat:** You continue halving the search interval until either you find the target or the interval becomes empty (meaning the target is not in the array).
+
+**Why is it Efficient?**
+
+The key advantage of binary search is its time complexity.  Because it eliminates half of the remaining search space with each comparison, it's significantly faster than a linear search (which checks each element one by one). Binary search has a time complexity of O(log n), where n is the number of elements in the array.  This means that as the array size doubles, the number of comparisons required only increases by one.
+
+**Code Explanation: The Skeleton**
+
+Let's analyze the Java code you provided:
+
+```java
+public int binarySearch(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        // TODO: Compare and adjust bounds
+    }
+    return -1;
+}
+```
+
+*   **`public int binarySearch(int[] arr, int target)`**: This defines a method named `binarySearch` that takes two arguments:
+    *   `arr`: The sorted integer array in which to search.
+    *   `target`: The integer value you're trying to find.
+    *   The method returns an `int`:  The index of the `target` in the array if found, or -1 if the `target` is not present.
+
+*   **`int left = 0, right = arr.length - 1;`**: This initializes two variables:
+    *   `left`:  Represents the index of the leftmost element of the current search interval.  It starts at 0 (the beginning of the array).
+    *   `right`: Represents the index of the rightmost element of the current search interval.  It starts at `arr.length - 1` (the end of the array).
+
+*   **`while (left <= right)`**: This is the main loop of the binary search. The loop continues as long as the `left` index is less than or equal to the `right` index.  This condition ensures that there is still a valid search interval to consider.  When `left` becomes greater than `right`, it means the interval is empty, and the target is not in the array.
+
+*   **`int mid = (left + right) / 2;`**: This calculates the index of the middle element within the current search interval.  It's important to note that for very large arrays, `(left + right)` could potentially cause an integer overflow.  A safer way to calculate the middle is `mid = left + (right - left) / 2;`.
+
+*   **`// TODO: Compare and adjust bounds`**: This is where the core logic of the binary search is missing!  We need to compare the value at `arr[mid]` to the `target` and adjust the `left` and `right` indices accordingly.
+
+*   **`return -1;`**: If the `while` loop completes without finding the `target` (meaning `left` became greater than `right`), the method returns -1, indicating that the `target` is not present in the array.
+
+Prompt 2 Results: 
+
+```java
+public int binarySearch ( int [] arr , int target ) {
+    int left = 0 , right = arr . length - 1;
+    while ( left <= right ) {
+        int mid = left + (right - left) / 2;
+        if ( arr [ mid ] == target ) {
+            return mid ;
+        } else if ( arr [ mid ] < target ) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1; 
+}
+```

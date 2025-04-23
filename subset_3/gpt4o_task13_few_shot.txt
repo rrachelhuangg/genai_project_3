@@ -1,0 +1,100 @@
+To implement the `deleteNode` function for the task of deleting a node by value from a linked list in C, you can follow these steps. Here's the code with comments explaining each part:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a linked list node
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Function to delete the first occurrence of the node containing the key
+void deleteNode(struct Node **head, int key) {
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    // If the head node itself holds the key to be deleted
+    if (curr != NULL && curr->data == key) {
+        *head = curr->next;  // Change head
+        free(curr);          // Free old head
+        return;
+    }
+
+    // Search for the node to be deleted, and track the previous node
+    while (curr != NULL && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    // If the key was not present in the linked list
+    if (curr == NULL) return;
+
+    // Unlink the node from the linked list
+    prev->next = curr->next;
+
+    // Free the memory of the node
+    free(curr);
+}
+
+// Helper function to print the linked list
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+// Helper function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+// Main function to test the deleteNode function
+int main() {
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+
+    printf("Created Linked List: ");
+    printList(head);
+
+    deleteNode(&head, 3);
+
+    printf("Linked List after deleting 3: ");
+    printList(head);  // Output: 1 2 4
+    
+    deleteNode(&head, 1);
+
+    printf("Linked List after deleting 1: ");
+    printList(head); // Output: 2 4
+
+    // Free remaining nodes
+    deleteNode(&head, 2);
+    deleteNode(&head, 4);
+
+    return 0;
+}
+```
+
+### Explanation:
+
+- **Node Structure:** Defines a simple linked list node with an integer `data` and a pointer `next` to the next node.
+
+- **deleteNode Function:** Deletes the first occurrence of a node with a specified `key`:
+
+  - **Head Node Deletion:** If the head node itself is the one to be deleted, update the `head` to point to `head->next` and free the old head.
+
+  - **Traversal:** Traverse the list while keeping track of the previous node (`prev`) until you find the node to be deleted (`curr`).
+
+  - **Unlink and Delete:** Once found, update `prev->next` to `curr->next` to unlink the node, then free the memory of the node.
+
+- **printList and newNode Helpers:** Helper functions to facilitate list operations for demo purposes.
+
+- **Main Function:** Demonstrates creating a linked list, deleting various nodes, and printing the list to verify the deletions.

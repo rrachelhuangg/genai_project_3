@@ -1,0 +1,35 @@
+To complete the recursive Fibonacci function, we need to address both the base cases and the recursive case. The Fibonacci sequence is defined as follows:
+
+- \( F(0) = 0 \)
+- \( F(1) = 1 \)
+- For \( n \geq 2 \), \( F(n) = F(n-1) + F(n-2) \)
+
+We will implement this in the function step by step:
+
+1. **Base Cases**: For the Fibonacci sequence, we handle the cases where \( n = 0 \) and \( n = 1 \) directly by returning 0 and 1 respectively.
+2. **Recursive Case**: For \( n \geq 2 \), the function should return the sum of the previous two Fibonacci numbers, \( F(n-1) + F(n-2) \).
+
+Let's implement this logic in the function:
+
+```python
+def fibonacci(n):
+    # Base case: if n is 0, return 0
+    if n == 0:
+        return 0
+    # Base case: if n is 1, return 1
+    elif n == 1:
+        return 1
+    else:
+        # Recursive case: return fibonacci(n-1) + fibonacci(n-2)
+        return fibonacci(n-1) + fibonacci(n-2)
+
+# Usage example (not part of the function, just to test):
+# print(fibonacci(5))  # Output should be 5
+```
+
+Explanation:
+- For \( n = 0 \), the function directly returns 0.
+- For \( n = 1 \), the function directly returns 1.
+- For \( n \geq 2 \), the function calls itself recursively to compute the sum of the Fibonacci numbers at \( n-1 \) and \( n-2 \).
+
+This recursive approach is straightforward but not efficient for large \( n \) due to its exponential time complexity. In practice, you would typically use an iterative approach or memoization to optimize this calculation for larger inputs.

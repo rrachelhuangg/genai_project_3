@@ -1,0 +1,44 @@
+To set up the SQL schema for a review app involving users, books, and reviews, you'll want to create three tables: `users`, `books`, and `reviews`. Each table will include primary keys, and foreign keys where necessary, along with any suitable constraints. Below is an example of how you might define this schema using SQL:
+
+```sql
+-- Users table, storing each user's ID and name.
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Books table, storing each book's ID and title.
+CREATE TABLE books (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL
+);
+
+-- Reviews table, which stores each review, its associated user ID, book ID, and rating.
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    book_id INT,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
+```
+
+### Explanation of the Schema:
+
+1. **Users Table:**
+   - `id`: An integer that uniquely identifies each user. It uses `AUTO_INCREMENT` to automatically generate the ID for new entries.
+   - `name`: A string (up to 255 characters) representing the name of the user. The `NOT NULL` constraint ensures that every user must have a name.
+
+2. **Books Table:**
+   - `id`: An integer that uniquely identifies each book. It also uses `AUTO_INCREMENT`.
+   - `title`: A string representing the title of the book, with a similar `NOT NULL` constraint as the `name` in the users table.
+
+3. **Reviews Table:**
+   - `id`: An integer that uniquely identifies each review entry and also uses `AUTO_INCREMENT`.
+   - `user_id`: An integer that corresponds to the `id` of a user in the `users` table, indicating who wrote the review.
+   - `book_id`: An integer that corresponds to the `id` of a book in the `books` table, indicating which book is being reviewed.
+   - `rating`: An integer representing the rating given in the review. The `CHECK` constraint ensures the rating is between 1 and 5.
+   - `FOREIGN KEY`: Establishes relationships to ensure referential integrity. If a user or book is deleted, associated reviews are also deleted due to the `ON DELETE CASCADE` option. 
+
+This schema ensures that your data is properly normalized and maintains referential integrity across the tables. It allows you to easily perform various queries like finding users who haven't submitted reviews, fetching books with high average ratings, and more as shown in the examples provided.

@@ -1,0 +1,1 @@
+ "Write a function that takes an integer `n` as input and returns `True` if it is prime, and `False` otherwise." 

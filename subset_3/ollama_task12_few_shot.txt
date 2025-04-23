@@ -1,0 +1,11 @@
+ Here's the corrected `factorial` function that correctly calculates the factorial of a number *n* using an iterative approach:
+```python
+def factorial(n):
+  if n == 0:
+    return 1
+  result = 1
+  for i in range (1, n+1):
+    result *= i
+  return result
+```
+This function calculates the factorial of `n` using a loop that iterates from `1` up to and including `n`, multiplying the result by each number in the loop. The base case is when `n` is equal to `0`, in which case the factorial is defined as `1`. 

@@ -1,0 +1,32 @@
+ To complete the recursive Python function for Fibonacci, we need to define the base case(s) and the recursive step. The base case(s) should cover the input values that are easily calculated directly. For the Fibonacci sequence, the base cases would be `n = 0` and `n = 1`, as they have known values:
+
+*   `fibonacci(0) = 0` (this is typically the base case for the first number in the sequence)
+*   `fibonacci(1) = 1` (this is typically the second base case)
+
+The recursive step should describe how to calculate a value based on one or more previously calculated values. For the Fibonacci sequence, each subsequent number can be calculated by adding the previous two numbers:
+
+*   `fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)`
+
+Here is the completed function:
+
+```python
+def fibonacci(n):
+    """
+    Calculates the nth number in the Fibonacci sequence recursively.
+    """
+    if n == 0:
+        return 0 # Base case: 0th number in the sequence is 0
+    elif n == 1:
+        return 1 # Base case: 1st number in the sequence is 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2) # Recursive call: Add previous two numbers to find next number in the sequence
+```
+
+Example usage:
+
+```python
+print(fibonacci(5))  # Output: 5
+print(fibonacci(0))   # Output: 0
+print(fibonacci(1))   # Output: 1
+print(fibonacci(9))   # Output: 34
+``` 

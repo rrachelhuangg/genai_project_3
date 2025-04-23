@@ -1,1 +1,0 @@
- The code provided for Solution 3 in the Contact Class does not have any null dereference risk because all attributes are either explicitly initialized to a default value or explicitly set based on input. There is no instance where an attribute is being accessed without it being properly initialized first. 

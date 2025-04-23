@@ -1,19 +1,21 @@
- import re from typing import List, Tuple
+ Here's a possible solution using regular expressions:
+```python
+import re
 
-def is\_valid\_email(email: str) -> bool:
-# Regular expression to match basic email addresses
-pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-
-if re.match(pattern, email):
-return True
-else:
-return False
-```scss
-# Example usage
-email1 = "example@example.com"
-email2 = "invalid_email"
-
-print(is_valid_email(email1))  # should print True
-print(is_valid_email(email2))  # should print False
+def is_valid_email(email):
+    # The regular expression pattern to match basic email addresses.
+    # It checks if the string has the format "x@y.z" where x, y and z are not empty strings.
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    
+    # Use the fullmatch() method to check if the string matches the pattern.
+    # If it does, return True; otherwise, return False.
+    return bool(re.fullmatch(pattern, email))
 ```
-# TODO : Create GET and POST endpoints using Ktor 
+The regular expression pattern used here checks if the input string has the following format:
+
+* At least one or more characters that can be alphabets (both upper and lower case), digits, dots, underscores, percent signs, plus signs, or hyphens. This part of the email address is known as the "local-part".
+* An at-sign (@).
+* Another string that contains only alphabets (both upper and lower case) and dots. This part of the email address is known as the "domain name".
+* A dot (.) followed by two or more characters that can be alphabets (both upper and lower case). This represents the top-level domain (e.g., .com, .org, etc.).
+
+This pattern should match most basic email addresses, but it may not cover all possible variations of email addresses. 

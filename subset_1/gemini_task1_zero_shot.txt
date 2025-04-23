@@ -1,6 +1,1 @@
-The Java method `isEven(n)` takes an integer `n` as input and returns the **remainder of `n` divided by 2.**  Crucially, it **does NOT return a boolean (true/false) value.** It returns either `0` or `1`.
-
-*   If `n` is even, `n % 2` will be `0`.
-*   If `n` is odd, `n % 2` will be `1`.
-
-Therefore, despite its name, the function does **not** actually determine if a number is even in the traditional boolean sense. It provides the remainder when divided by 2.
+The Java method `countWordFrequency` takes a list of strings (words) as input and returns a map where the keys are the unique words from the input list and the values are the number of times each word appears in the list (its frequency).  It iterates through the input list, and for each word, it either adds the word to the map with a frequency of 1 if it's not already present, or increments the existing frequency count by 1 if the word is already in the map.

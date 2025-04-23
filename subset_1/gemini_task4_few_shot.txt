@@ -1,174 +1,43 @@
-Okay, here's a breakdown of how to create GET and POST endpoints for your `Product` data class using Ktor, along with code examples and explanations.
+```python
+import re
 
-**1. Dependencies (build.gradle.kts):**
-
-First, make sure you have the necessary dependencies in your `build.gradle.kts` file:
-
-```kotlin
-plugins {
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.10"
-}
-
-group = "org.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:2.3.10")
-    implementation("io.ktor:ktor-server-netty-jvm:2.3.10") // or any other server engine like Jetty
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.10")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.10") // For JSON serialization
-    implementation("ch.qos.logback:logback-classic:1.2.11") // Logging
-    testImplementation(kotlin("test"))
-}
-
-application {
-    mainClass.set("MainKt") // Or whatever your main class is
-}
-```
-
-Key dependencies:
-
-*   `ktor-server-core`:  The core Ktor server library.
-*   `ktor-server-netty` (or Jetty, etc.):  The server engine.
-*   `ktor-server-content-negotiation`: Enables content negotiation (e.g., JSON, XML).
-*   `ktor-serialization-kotlinx-json`:  Allows automatic JSON serialization using `kotlinx.serialization`.
-*   `logback-classic`:  For logging (optional but recommended).
-
-**2. Data Class:**
-
-You already have this:
-
-```kotlin
-data class Product(val id: Int, val name: String, val price: Double)
-```
-
-**3. Main Application (Server):**
-
-```kotlin
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.request.*
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-
-@Serializable // Needed for Kotlinx Serialization
-data class Product(val id: Int, val name: String, val price: Double)
-
-fun main() {
-    val products = mutableListOf(
-        Product(1, "Laptop", 1200.0),
-        Product(2, "Mouse", 25.0)
-    )
-
-    embeddedServer(Netty, port = 8080) {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true // Important for when the client sends extra fields
-            })
-        }
-
-        routing {
-            // GET /products: Retrieve all products
-            get("/products") {
-                call.respond(products)
-            }
-
-            // GET /products/{id}: Retrieve a specific product by ID
-            get("/products/{id}") {
-                val id = call.parameters["id"]?.toIntOrNull()  // Get ID from path
-                if (id == null) {
-                    call.respondText("Invalid product ID", status = io.ktor.http.HttpStatusCode.BadRequest)
-                    return@get
-                }
-
-                val product = products.find { it.id == id }
-                if (product == null) {
-                    call.respondText("Product not found", status = io.ktor.http.HttpStatusCode.NotFound)
-                    return@get
-                }
-
-                call.respond(product)
-            }
-
-            // POST /products: Create a new product
-            post("/products") {
-                try {
-                    val product = call.receive<Product>()  // Receive the product from the request body
-
-                    // Basic validation (you should add more robust validation)
-                    if (products.any { it.id == product.id }) {
-                        call.respondText("Product with this ID already exists", status = io.ktor.http.HttpStatusCode.Conflict)
-                        return@post
-                    }
-
-                    products.add(product)
-                    call.respondText("Product added successfully", status = io.ktor.http.HttpStatusCode.Created) // 201 Created
-                } catch (e: Exception) {
-                    call.respondText("Failed to create product: ${e.message}", status = io.ktor.http.HttpStatusCode.BadRequest) // 400 Bad Request
-                }
-            }
-        }
-    }.start(wait = true)
-}
+def is_valid_email(email):
+    """
+    Checks if a string is a valid email address using a basic regex.
+    """
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    match = re.match(pattern, email)
+    return bool(match)
 ```
 
 **Explanation:**
 
-*   **`@Serializable`:**  This annotation from `kotlinx.serialization` is crucial.  It tells the JSON serializer how to convert your `Product` data class to and from JSON.  Make sure you've added the `kotlinx-serialization-json` dependency.
-*   **`embeddedServer`:** This creates and starts the Ktor server.  `Netty` is a popular choice, but you can use other engines like Jetty.
-*   **`install(ContentNegotiation)`:**  This tells Ktor to handle content negotiation.  We're setting it up to use JSON serialization. The `ignoreUnknownKeys = true` setting is important to prevent errors when a client sends extra fields that the server does not expect.
-*   **`routing { ... }`:**  This defines the routes (endpoints) of your application.
-*   **`get("/products") { ... }`:**  This defines a GET route at `/products`.  When a client makes a GET request to this URL, the code inside the curly braces will be executed.  In this case, it retrieves all products from the `products` list and responds with them.
-*   **`get("/products/{id}") { ... }`:**  This defines a GET route that takes an ID as a path parameter (e.g., `/products/123`).
-    *   `call.parameters["id"]`:  This extracts the value of the `id` parameter from the URL.
-    *   `toIntOrNull()`: This attempts to convert the ID string to an integer.  If it fails (e.g., the ID is not a number), it returns `null`.
-    *   Error handling:  The code checks if the ID is valid and if the product exists. If not, it responds with appropriate error messages and HTTP status codes.
-    *   `call.respond(product)`: If the product is found, it's sent back to the client as JSON.
-*   **`post("/products") { ... }`:** This defines a POST route at `/products`.  This route is used to create new products.
-    *   `call.receive<Product>()`:  This is a very important part.  It tells Ktor to receive the request body (which is assumed to be JSON) and automatically deserialize it into a `Product` object.  This is where `kotlinx.serialization` does its magic.
-    *   Validation:  The code includes basic validation to check if a product with the same ID already exists.  **Important:**  You should add more robust validation to check all fields (e.g., name cannot be blank, price must be positive).
-    *   `call.respondText("Product added successfully", status = HttpStatusCode.Created)`: Sends a success message and the `201 Created` status code.
+*   `^`: Matches the beginning of the string.
+*   `[a-zA-Z0-9._%+-]+`: Matches one or more alphanumeric characters (a-z, A-Z, 0-9), periods (.), underscores (\_), percent signs (%), plus signs (+), or hyphens (-). This part covers the "username" part of the email address.
+*   `@`: Matches the "@" symbol, which separates the username and domain.
+*   `[a-zA-Z0-9.-]+`: Matches one or more alphanumeric characters, periods, or hyphens. This represents the domain name.
+*   `\.`: Matches a literal period (.).  It needs to be escaped with a backslash because "." is a special character in regular expressions (it matches any character).
+*   `[a-zA-Z]{2,}`: Matches two or more alphabetic characters. This represents the top-level domain (e.g., "com", "org", "net", "us"). The `{2,}` ensures that the TLD has at least two characters.
+*   `$`: Matches the end of the string.
 
-**How to Run:**
+**Important Notes on Email Validation:**
 
-1.  **Build:** Use Gradle to build your project: `./gradlew build`
-2.  **Run:** Run the main function in your IDE or execute the generated JAR file.
+*   **Simplicity:** This regex provides a basic level of email validation. It's suitable for simple cases.  Real-world email validation can be much more complex.
+*   **False Positives:**  This regex might reject some valid email addresses (false positives) because it doesn't cover all possible valid formats.  Email addresses can have unusual characters and longer TLDs.
+*   **False Negatives:**  It might also accept some invalid email addresses (false negatives) because it doesn't perform a thorough syntax check or verify the existence of the domain.
+*   **Domain Existence:** The regex cannot verify if the domain actually exists. For that, you would need to perform a DNS lookup.
+*   **Best Practices:**  For robust email validation, consider using a dedicated email validation library or service, rather than relying solely on a simple regex. These libraries often incorporate more comprehensive checks and domain verification.
+*   **Character Escaping:**  Be mindful of character escaping in regular expressions. Special characters (like `.`, `+`, `*`, `?`, `[`, `]`, `^`, `$`, `(`, `)`, `{`, `}`, `|`, `\`) need to be escaped with a backslash (`\`) if you want to match them literally.
 
-**Testing (using `curl`):**
+**Example Usage:**
 
-*   **Get all products:**
+```python
+print(is_valid_email("test@example.com"))        # True
+print(is_valid_email("user.name@domain.org"))   # True
+print(is_valid_email("invalid-email"))           # False
+print(is_valid_email("missing@tld"))            # False
+print(is_valid_email("test@example"))            # False
+print(is_valid_email("test@.com"))               # False
+print(is_valid_email("test@example..com"))        # False
 
-    ```bash
-    curl http://localhost:8080/products
-    ```
-
-*   **Get a specific product:**
-
-    ```bash
-    curl http://localhost:8080/products/1
-    ```
-
-*   **Create a new product:**
-
-    ```bash
-    curl -X POST -H "Content-Type: application/json" -d '{"id": 3, "name": "Keyboard", "price": 75.0}' http://localhost:8080/products
-    ```
-
-**Important Considerations:**
-
-*   **Error Handling:**  The example includes basic error handling, but you should implement more robust error handling in a real application.  Consider using try-catch blocks and logging errors.
-*   **Validation:**  Thoroughly validate the data you receive from the client (especially in the POST endpoint) to prevent errors and security vulnerabilities.  You can use libraries like `kotlinx.serialization` or custom validation logic.
-*   **Database:** In a real-world application, you would typically store the products in a database instead of an in-memory list. You would need to add database dependencies and interact with the database within your routes.
-*   **Security:**  For production environments, you'll need to consider security aspects like authentication, authorization, and protection against common web vulnerabilities.
-
-This comprehensive example gives you a good starting point for building a Ktor application with GET and POST endpoints for your `Product` data class. Remember to adapt the code to your specific requirements.
+```

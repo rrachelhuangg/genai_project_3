@@ -1,0 +1,14 @@
+ Here's one possible way to complete the `Person` class in Python:
+```python
+class Person:
+    def __init__(self, name, age, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+```
+Explanation:
+
+* The constructor takes three arguments: `name`, `age`, and `email`.
+* The `email` argument is optional (has a default value of `None`).
+* Inside the constructor, we set the values of `self.name`, `self.age`, and `self.email` to the corresponding arguments passed to the constructor.
+* The `self` keyword refers to the instance of the class being created. It allows us to access and modify the attributes of that instance. 

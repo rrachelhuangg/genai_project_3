@@ -1,0 +1,17 @@
+The given Python function `reverse_words` takes a sentence as input and reverses the order of words, but not the characters within the words. Here is a brief summary and explanation of its operation:
+
+### Summary
+
+- **Function Purpose**: Reverse the order of the words in a given sentence.
+- **Input**: A string `sentence`.
+- **Output**: A string where the words appear in reverse order compared to the input.
+
+### Explanation
+
+1. **`sentence.split()`**: This method splits the sentence into a list of words based on whitespace. For example, the sentence `"hello world"` would be split into `["hello", "world"]`.
+
+2. **`[:: -1]`**: This slice notation reverses the list of words. In the example above, `["hello", "world"]` becomes `["world", "hello"]`.
+
+3. **`' '.join(...)`**: This joins the reversed list of words back into a single string, with spaces in between each word. The result for the example would be `"world hello"`.
+
+By using these operations together, the function reverses the order of words in the sentence while keeping the words themselves unchanged.

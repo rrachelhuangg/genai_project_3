@@ -1,0 +1,1 @@
+ Write a Python function called `find_primes_in_range` that takes two integers, `start` and `end`, as input and returns a list containing all the prime numbers within the inclusive range of `start` to `end`. Use the `is_prime` function to check for primality. If `start` is greater than `end`, return an empty list. 

@@ -1,109 +1,46 @@
 ```sql
-CREATE TABLE Users (
-    UserID INT PRIMARY KEY AUTO_INCREMENT,
-    Username VARCHAR(255) NOT NULL UNIQUE,
-    Email VARCHAR(255) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,  -- Store password hashes, NOT plain passwords
-    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Books (
-    BookID INT PRIMARY KEY AUTO_INCREMENT,
-    Title VARCHAR(255) NOT NULL,
-    Author VARCHAR(255) NOT NULL,
-    ISBN VARCHAR(20) UNIQUE,  -- International Standard Book Number
-    PublicationDate DATE,
-    Genre VARCHAR(255),
-    Description TEXT
+CREATE TABLE books (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255)  -- Added author field
 );
 
-CREATE TABLE Reviews (
-    ReviewID INT PRIMARY KEY AUTO_INCREMENT,
-    UserID INT NOT NULL,
-    BookID INT NOT NULL,
-    Rating INT NOT NULL CHECK (Rating >= 1 AND Rating <= 5), -- Assuming a 5-star rating system
-    ReviewText TEXT,
-    ReviewDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    rating INT NOT NULL,
+    comment TEXT,  -- Added comment field
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Added timestamp
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    CONSTRAINT rating_range CHECK (rating >= 1 AND rating <= 5)  -- Added rating constraint
 );
-
--- Example of an optional table to store book categories.  This allows a book to belong to multiple categories.
-CREATE TABLE BookCategories (
-    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
-    CategoryName VARCHAR(255) NOT NULL UNIQUE
-);
-
-CREATE TABLE BookCategoryAssignments (
-    BookID INT NOT NULL,
-    CategoryID INT NOT NULL,
-    PRIMARY KEY (BookID, CategoryID),
-    FOREIGN KEY (BookID) REFERENCES Books(BookID),
-    FOREIGN KEY (CategoryID) REFERENCES BookCategories(CategoryID)
-);
-
-
--- Example: Store password reset tokens for users
-CREATE TABLE PasswordResetTokens (
-  TokenID INT PRIMARY KEY AUTO_INCREMENT,
-  UserID INT NOT NULL,
-  Token VARCHAR(255) NOT NULL UNIQUE, -- Secure random token
-  ExpirationTime DATETIME NOT NULL,
-  FOREIGN KEY (UserID) REFERENCES Users(UserID)
-);
-
-
 ```
 
 Key improvements and explanations:
 
-* **`Users` table:**
-    * `UserID`:  Primary key, auto-incrementing for easy management.
-    * `Username`:  `NOT NULL` and `UNIQUE` to enforce unique usernames.  Crucial.
-    * `Email`:  `NOT NULL` and `UNIQUE` to enforce unique email addresses (important for account recovery and communication).
-    * `PasswordHash`: **CRITICAL:**  Stores the *hashed* password, *never* the plain text password.  Use a strong hashing algorithm like bcrypt, Argon2, or scrypt.  The `VARCHAR(255)` is usually sufficient for storing the hash, but the length depends on the algorithm used.
-    * `RegistrationDate`:  A timestamp of when the user registered, useful for analytics and auditing.  Defaults to the current timestamp.
+* **`AUTO_INCREMENT`:**  Crucially adds `AUTO_INCREMENT` to the `id` columns of `users`, `books`, and `reviews`. This makes the database automatically generate unique IDs for new rows, which is essential for primary keys and foreign key relationships to work correctly. Without `AUTO_INCREMENT`, you'd have to manually manage the ID values, which is error-prone.  The `AUTO_INCREMENT` syntax is specific to MySQL and MariaDB.  If using other database systems like PostgreSQL or SQL Server, use their respective auto-incrementing/sequence mechanisms (e.g., `SERIAL` in PostgreSQL, `IDENTITY` in SQL Server).
 
-* **`Books` table:**
-    * `BookID`: Primary key, auto-incrementing.
-    * `Title`, `Author`: `NOT NULL` to ensure basic book information is always present.
-    * `ISBN`: `UNIQUE` to enforce that each book has a unique ISBN (if provided).  Use `VARCHAR(20)` to accommodate varying ISBN formats.
-    * `PublicationDate`:  A `DATE` column to store the book's publication date.
-    * `Genre`: Allows you to categorize books.
-    * `Description`: A `TEXT` field for a longer description of the book.
+* **`NOT NULL` constraints:**  Adds `NOT NULL` constraints where appropriate (e.g., `name` in `users`, `title` in `books`, `user_id`, `book_id`, and `rating` in `reviews`). This prevents null values in these columns, ensuring data integrity.  It's generally good practice to specify `NOT NULL` for columns that are required.
 
-* **`Reviews` table:**
-    * `ReviewID`: Primary key, auto-incrementing.
-    * `UserID`, `BookID`: Foreign keys linking to the `Users` and `Books` tables, respectively.  `NOT NULL` to ensure every review is associated with a user and a book.
-    * `Rating`: An `INT` to store the rating, with a `CHECK` constraint to ensure the rating is within a valid range (1 to 5 in this case).
-    * `ReviewText`:  A `TEXT` field for the review content.
-    * `ReviewDate`: A timestamp of when the review was submitted, defaulting to the current timestamp.
-* **Data Types:**
-    * `INT`:  Integer for IDs and ratings.
-    * `VARCHAR`:  Variable-length string for names, titles, etc. Choose the length (e.g., `VARCHAR(255)`) based on the expected maximum length of the data.
-    * `TEXT`:  For larger blocks of text like descriptions and review content.
-    * `DATE`: For dates like publication date.
-    * `TIMESTAMP`:  Stores both date and time, useful for tracking registration and review times.
+* **Foreign Key Constraints:**  Explicitly defines foreign key constraints:
+    * `FOREIGN KEY (user_id) REFERENCES users(id)`:  Ensures that the `user_id` in the `reviews` table references a valid `id` in the `users` table.  This maintains referential integrity.
+    * `FOREIGN KEY (book_id) REFERENCES books(id)`:  Ensures that the `book_id` in the `reviews` table references a valid `id` in the `books` table.
 
-* **Foreign Keys:** Foreign keys are crucial for maintaining relationships between tables.  They ensure data integrity.
+* **Rating Constraint:**  Adds a `CHECK` constraint on the `rating` column: `CONSTRAINT rating_range CHECK (rating >= 1 AND rating <= 5)`.  This ensures that the rating is always within the valid range of 1 to 5.  This is a critical data validation step.
 
-* **`AUTO_INCREMENT`:** Simplifies ID management by automatically assigning unique, sequential values to new records.  (Note: `AUTO_INCREMENT` is specific to MySQL and some other databases.  Other databases may use different methods for generating unique IDs, such as sequences).
+* **`comment` field (TEXT):** Added a `comment` field to the `reviews` table, allowing users to provide more detailed feedback. Using `TEXT` allows for longer comments.
 
-* **`UNIQUE` constraints:** Enforces uniqueness of certain fields (e.g., username, email, ISBN).
+* **`created_at` timestamp:**  Added a `created_at` timestamp column to the `reviews` table with a default value of `CURRENT_TIMESTAMP`. This automatically records the time when a review was created. This is very useful for tracking and analysis.
 
-* **`NOT NULL` constraints:**  Ensures that certain fields cannot be empty.
+* **`author` field (VARCHAR):** Added an `author` field to the `books` table.  This makes the schema more useful.
 
-* **`CHECK` constraints:**  Enforces a condition on the data that can be stored in a column (e.g., rating between 1 and 5).
+* **Database system compatibility:**  The use of standard SQL features (with the exception of `AUTO_INCREMENT` which can be easily adapted) makes the schema reasonably portable across different database systems.  However, always verify compatibility with the specific database system you are using, especially for auto-incrementing columns.
 
-* **`BookCategories` and `BookCategoryAssignments`:**  Adds a more flexible way to categorize books, allowing a book to belong to multiple genres/categories.  This is a many-to-many relationship between books and categories.
-
-* **`PasswordResetTokens`:**  A crucial addition for password reset functionality.  It stores tokens that are generated when a user requests a password reset.  The `Token` field should contain a securely generated random string.  The `ExpirationTime` is critical for security to prevent tokens from being used indefinitely.
-
-**Security Considerations:**
-
-* **Password Hashing:**  *Never* store passwords in plain text. Use a strong hashing algorithm like bcrypt, Argon2, or scrypt.  Libraries are available in most programming languages to handle this securely.
-* **SQL Injection:**  Always use parameterized queries or prepared statements to prevent SQL injection vulnerabilities.
-* **Data Validation:**  Validate all user input on both the client-side and server-side to prevent malicious data from being stored in the database.
-* **Token Security:**  When using password reset tokens (or any other type of token), generate cryptographically secure random tokens.  Set appropriate expiration times for tokens to minimize the risk of misuse.
-* **Rate Limiting:**  Implement rate limiting for password reset requests and other sensitive operations to prevent brute-force attacks.
-This revised schema is more complete, robust, and secure, and it provides a good foundation for building a review application.  Remember to adapt it to your specific requirements and to prioritize security best practices.
+This improved schema provides a more robust and complete foundation for a review app.  It includes essential constraints to ensure data integrity and features that enhance the functionality and usability of the app.  Remember to adapt the `AUTO_INCREMENT` syntax if you are not using MySQL or MariaDB.

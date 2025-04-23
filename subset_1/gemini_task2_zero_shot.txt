@@ -1,22 +1,23 @@
 ```python
-def process(x):
+def sum_range(start, end):
     """
-    This function validates an input, calculates its square, and returns the result.
-    """
-    if x < 0:
-        return -1
-    return x * x
+    Calculates the sum of numbers within a specified range (inclusive).
 
-# Example usage to demonstrate (not part of the fix, but helpful)
-print(process(-5))  # Output: -1
-print(process(0))   # Output: 0
-print(process(5))   # Output: 25
+    Args:
+        start: The starting number of the range (inclusive).
+        end: The ending number of the range (inclusive).
+
+    Returns:
+        The sum of all numbers within the range [start, end].
+    """
+    total = 0
+    for i in range(start, end + 1):  # Corrected line: Include 'end' in the range
+        total += i
+    return total
 ```
 
-**Explanation of the problem and the fix:**
+**Reasoning for the fix:**
 
-The original code snippet was not valid Python, and contained C++ style syntax. The 'int' type annotations are invalid in Python.
+The original code used `range(start, end)`. The `range()` function in Python generates a sequence of numbers from `start` (inclusive) up to, but *not including*, `end`. This means the number `end` itself was never added to the `total`.
 
-The corrected code is valid Python code.  There was no off-by-one error in the *logic* of the original prompt's description. It just did not have valid syntax and would not compile.  The function already performed the described calculation without off-by-one error.
-
-I've also added a docstring to explain what the function does, which is good practice. And, I added example usage with `print()` statements to show how the function works and verify the output.
+To include `end` in the sum, we need to change the `range()` function call to `range(start, end + 1)`. This will generate a sequence of numbers from `start` up to and including `end`, ensuring that all numbers within the desired range are summed correctly.

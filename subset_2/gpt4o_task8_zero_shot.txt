@@ -1,0 +1,30 @@
+To improve the Python parser to support quoted fields in CSV lines, you can use the `csv` module in Python, which handles these cases for you. The `csv` module is designed to properly parse CSV files, taking into account quoted fields, escape characters, and other complexities.
+
+Here's how you can enhance your `parse_csv_line` function to handle quoted fields:
+
+```python
+import csv
+from io import StringIO
+
+def parse_csv_line(line):
+    # Use StringIO to treat the input string as a file-like object
+    input_stream = StringIO(line)
+    reader = csv.reader(input_stream)
+    # Read the line and return the first (and only) parsed row
+    return next(reader)
+
+# Example usage
+csv_line = 'value1,"value with a , comma",value3'
+parsed = parse_csv_line(csv_line)
+print(parsed)  # Output: ['value1', 'value with a , comma', 'value3']
+```
+
+### Explanation:
+
+1. **`csv.reader`**: This function from the `csv` module reads from a file-like object and properly handles quoted fields, commas inside quotes, and other CSV specifications.
+
+2. **`StringIO`**: This is used to convert the input string into a file-like object, which `csv.reader` can read from.
+
+3. **Using the `next()` function**: Since `csv.reader` returns an iterator that yields rows from the CSV input, calling `next()` retrieves the first (and only) line parsed as a list of values.
+
+This approach will correctly parse CSV lines with quoted fields and other complexities commonly found in CSV files.

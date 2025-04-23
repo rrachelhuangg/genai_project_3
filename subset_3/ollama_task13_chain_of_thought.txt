@@ -1,0 +1,29 @@
+ Here is a possible implementation of the `deleteNode` function in C:
+```
+void deleteNode(struct Node **head, int key) {
+  if (*head == NULL) {
+    return;
+  }
+  
+  if ((*head)->data == key) {
+    struct Node *temp = *head;
+    *head = (*head)->next;
+    free(temp);
+    return;
+  }
+  
+  struct Node *current = *head;
+  while (current->next != NULL && current->next->data != key) {
+    current = current->next;
+  }
+  
+  if (current->next == NULL) {
+    return;
+  }
+  
+  struct Node *temp = current->next;
+  current->next = current->next->next;
+  free(temp);
+}
+```
+This implementation uses a loop to traverse the list and find the node with the specified key. If the node is found, it is removed from the list using `free`. Note that this implementation assumes that the input list is not empty. 

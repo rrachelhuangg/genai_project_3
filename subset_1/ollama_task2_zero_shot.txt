@@ -1,14 +1,10 @@
- The given code is written in C, not Python. In C, the function signature should be `int process(int x)` instead of `int process(int x )`. Additionally, there's an off-by-one error in the conditional statement: the correct condition to check if the input is negative or zero is `if (x <= 0)`, since `x < 0` will only match negative numbers and not zero. Here's the corrected code in C:
-```c
-int process(int x) {
-    if (x <= 0) return -1;
-    return x * x ;
-}
+ The off-by-one error in this Python function occurs because the loop starts from `start` and ends at `end`, but the range function includes the `end` value itself. This means that if `start = 1` and `end = 4`, for example, the loop will include the number `4`, but it will not include the number `5`.
+
+To fix this error, we can add `1` to both the start and end values of the range function, which will include all numbers up to, but not including, the end value:
 ```
-In Python, the corrected function would look like this:
-```python
-def process(x):
-    if x <= 0:
-        return -1
-    return x ** 2
+def sum_range ( start , end ) :
+    total = 0
+    for i in range ( start + 1 , end ) :
+        total += i
+    return total
 ``` 

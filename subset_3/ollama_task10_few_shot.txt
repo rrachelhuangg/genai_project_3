@@ -1,7 +1,0 @@
- This function takes a string input as `sentence` and returns the reversed string by splitting the string into words, reversing the order of the words using the list slicing technique, and then joining them back together with a space between each word. The `[::-1]` slice notation means "start at the end of the list and end at position 0, move in steps of -1" which effectively reverses the elements in the list.
-
-Here's how you can use this function:
-```python
->>> reverse_words("Hello World")
-"dlroW olleH"
-``` 

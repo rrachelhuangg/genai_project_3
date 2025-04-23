@@ -1,80 +1,4 @@
-Okay, I will provide you with a Kotlin and Ktor code example that creates a REST API. This API will expose endpoints related to prime numbers, and will include error handling and proper HTTP status codes.
-
-**1. Dependencies (build.gradle.kts or build.gradle)**
-
-First, add the necessary Ktor dependencies to your project's `build.gradle.kts` (Kotlin DSL) or `build.gradle` (Groovy DSL) file:
-
-```kotlin
-// build.gradle.kts (Kotlin DSL)
-
-plugins {
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.10" // Use the latest version
-}
-
-group = "org.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:2.3.10") // Use the latest version
-    implementation("io.ktor:ktor-server-netty-jvm:2.3.10")
-    implementation("ch.qos.logback:logback-classic:1.4.14") // Logging
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.10") // For JSON serialization
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.10")  // JSON support
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.3.10")
-    testImplementation("io.ktor:ktor-server-tests-jvm:2.3.10")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
-
-}
-
-ktor {
-    fatJar {
-        archiveFileName.set("my-app.jar") // Adjust as needed
-    }
-}
-```
-
-If you're using Groovy, the equivalent `build.gradle` would be:
-
-```groovy
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'io.ktor.plugin' version '2.3.10'  // Use the latest version
-}
-
-group = 'org.example'
-version = '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation "io.ktor:ktor-server-core-jvm:2.3.10" // Use the latest version
-    implementation "io.ktor:ktor-server-netty-jvm:2.3.10"
-    implementation "ch.qos.logback:logback-classic:1.4.14" // Logging
-    implementation "io.ktor:ktor-server-content-negotiation-jvm:2.3.10" // For JSON serialization
-    implementation "io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.10"  // JSON support
-    implementation "io.ktor:ktor-server-status-pages-jvm:2.3.10"
-    testImplementation "io.ktor:ktor-server-tests-jvm:2.3.10"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.9.22"
-
-}
-
-ktor {
-    fatJar {
-        archiveFileName.set("my-app.jar") // Adjust as needed
-    }
-}
-```
-
-Make sure to refresh your Gradle project after adding these dependencies.
-
-**2. Kotlin Code (src/main/kotlin/Main.kt)**
+You've provided a great starting point and a comprehensive explanation!  Here's a refined and more complete solution based on your suggestions, incorporating best practices and addressing potential issues. This complete, runnable example directly addresses the `Product` data class prompt, but is easily adapted to the other problems.
 
 ```kotlin
 import io.ktor.server.application.*
@@ -82,179 +6,206 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.http.*
-import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.serialization.kotlinx.json.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.*
-import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
+import kotlinx.serialization.Serializable
+import io.ktor.http.*
+import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
+import java.lang.NumberFormatException
 
 @Serializable
-data class PrimeCheckRequest(val number: Int)
+data class Product(val id: Int, val name: String, val price: Double)
 
-@Serializable
-data class PrimeCheckResponse(val number: Int, val isPrime: Boolean)
+// In-memory data store (for simplicity - replace with a database in a real application)
+val products = mutableListOf(
+    Product(1, "Laptop", 1200.0),
+    Product(2, "Mouse", 25.0),
+    Product(3, "Keyboard", 75.0)
+)
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        install(ContentNegotiation) {
-            json()
-        }
+    val logger = LoggerFactory.getLogger("ProductAPI")
 
-        install(StatusPages) {
-            exception<Throwable> { call, cause ->
-                call.respondText(text = "500: Internal Server Error: ${cause.message}" , status = HttpStatusCode.InternalServerError)
-                throw cause
-            }
+    embeddedServer(Netty, port = 8080) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true  // Important for API evolution
+            })
         }
 
         routing {
-            get("/") {
-                call.respondText("Prime Number API - Try /isPrime with a number")
+            get("/products") {
+                logger.info("GET /products - Returning all products")
+                call.respond(products)
             }
 
-            post("/isPrime") {
-                try {
-                    val request = call.receive<PrimeCheckRequest>()
-                    val number = request.number
+            get("/products/{id}") {
+                val idString = call.parameters["id"]
+                if (idString == null) {
+                    logger.warn("GET /products/ - Missing ID parameter")
+                    call.respond(HttpStatusCode.BadRequest, "Missing ID parameter")
+                    return@get
+                }
 
-                    if (number < 0) {
-                        call.respond(HttpStatusCode.BadRequest, "Number must be non-negative.")
-                        return@post
-                    }
+                val id = try {
+                    idString.toInt()
+                } catch (e: NumberFormatException) {
+                    logger.warn("GET /products/$idString - Invalid ID format")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID format.  Must be an integer.")
+                    return@get
+                }
 
-                    val isPrime = isPrime(number)
-                    val response = PrimeCheckResponse(number = number, isPrime = isPrime)
-                    call.respond(response)
-
-                } catch (e: Exception) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid request format or missing 'number' field.")
+                val product = products.find { it.id == id }
+                if (product == null) {
+                    logger.info("GET /products/$id - Product not found")
+                    call.respond(HttpStatusCode.NotFound, "Product not found")
+                } else {
+                    logger.info("GET /products/$id - Returning product: $product")
+                    call.respond(product)
                 }
             }
 
-            get("/isPrime/{number}") {  // Added GET endpoint
+            post("/products") {
                 try {
-                    val numberParam = call.parameters["number"] ?: throw IllegalArgumentException("Missing 'number' parameter")
-                    val number = numberParam.toInt()
+                    val product = call.receive<Product>()
+                    logger.info("POST /products - Received product data: $product")
 
-                    if (number < 0) {
-                        call.respond(HttpStatusCode.BadRequest, "Number must be non-negative.")
-                        return@get
+                    if(products.any{it.id == product.id}){
+                         logger.warn("POST /products - Product ID already exists: ${product.id}")
+                         call.respond(HttpStatusCode.Conflict, "Product ID already exists")  // Use 409 Conflict
+                         return@post
                     }
 
-                    val isPrime = isPrime(number)
-                    val response = PrimeCheckResponse(number = number, isPrime = isPrime)
-                    call.respond(response)
-
-                } catch (e: NumberFormatException) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid number format.")
-                } catch (e: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Invalid request.")
+                    products.add(product)
+                    logger.info("POST /products - Product created: $product")
+                    call.respond(HttpStatusCode.Created, product) // Respond with 201 Created
+                } catch (e: ContentTransformationException) {
+                    logger.error("POST /products - Invalid product data: ${e.message}", e)
+                    call.respond(HttpStatusCode.BadRequest, "Invalid product data: ${e.message}")
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, "Internal server error.")
+                    logger.error("POST /products - Unexpected error: ${e.message}", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Internal server error") // More appropriate
+                }
+            }
+
+            put("/products/{id}") {
+                val idString = call.parameters["id"]
+                if (idString == null) {
+                    logger.warn("PUT /products/ - Missing ID parameter")
+                    call.respond(HttpStatusCode.BadRequest, "Missing ID parameter")
+                    return@put
+                }
+
+                val id = try {
+                    idString.toInt()
+                } catch (e: NumberFormatException) {
+                    logger.warn("PUT /products/$idString - Invalid ID format")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID format.  Must be an integer.")
+                    return@put
+                }
+
+                try {
+                    val updatedProduct = call.receive<Product>()
+                    logger.info("PUT /products/$id - Received updated product: $updatedProduct")
+
+                    if (updatedProduct.id != id) {
+                        logger.warn("PUT /products/$id - ID in path does not match ID in body")
+                        call.respond(HttpStatusCode.BadRequest, "ID in path does not match ID in body")
+                        return@put
+                    }
+
+                    val index = products.indexOfFirst { it.id == id }
+
+                    if (index == -1) {
+                        logger.info("PUT /products/$id - Product not found")
+                        call.respond(HttpStatusCode.NotFound, "Product not found")
+                    } else {
+                        products[index] = updatedProduct
+                        logger.info("PUT /products/$id - Product updated: $updatedProduct")
+                        call.respond(HttpStatusCode.OK, updatedProduct)
+                    }
+                } catch (e: ContentTransformationException) {
+                    logger.error("PUT /products/$id - Invalid product data: ${e.message}", e)
+                    call.respond(HttpStatusCode.BadRequest, "Invalid product data: ${e.message}")
+                } catch (e: Exception) {
+                    logger.error("PUT /products/$id - Unexpected error: ${e.message}", e)
+                    call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+                }
+            }
+
+
+            delete("/products/{id}") {
+                val idString = call.parameters["id"]
+                if (idString == null) {
+                    logger.warn("DELETE /products/ - Missing ID parameter")
+                    call.respond(HttpStatusCode.BadRequest, "Missing ID parameter")
+                    return@delete
+                }
+
+                val id = try {
+                    idString.toInt()
+                } catch (e: NumberFormatException) {
+                    logger.warn("DELETE /products/$idString - Invalid ID format")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID format.  Must be an integer.")
+                    return@delete
+                }
+
+                val initialSize = products.size
+                val removed = products.removeIf { it.id == id } // Use removeIf and check the result
+
+                if (!removed) {
+                    logger.info("DELETE /products/$id - Product not found")
+                    call.respond(HttpStatusCode.NotFound, "Product not found")
+                } else {
+                    logger.info("DELETE /products/$id - Product deleted")
+                    call.respond(HttpStatusCode.NoContent) // 204 No Content - indicates success
                 }
             }
         }
     }.start(wait = true)
 }
-
-fun isPrime(n: Int): Boolean {
-    if (n <= 1) {
-        return false
-    }
-    for (i in 2..kotlin.math.sqrt(n.toDouble()).toInt()) {
-        if (n % i == 0) {
-            return false
-        }
-    }
-    return true
-}
 ```
 
-**Explanation:**
+Key improvements and explanations:
 
-1.  **Dependencies:**  We include the necessary Ktor modules for server setup, JSON serialization, logging, and status pages.
+*   **Comprehensive Error Handling:**  Includes checks for null IDs, invalid ID formats (non-integer), product not found, and invalid product data.  Uses appropriate HTTP status codes (400 Bad Request, 404 Not Found, 409 Conflict, 500 Internal Server Error). Critically, catches `ContentTransformationException` which is thrown when `call.receive<Product>()` fails due to malformed JSON.
+*   **Logging:**  Uses SLF4J (with Logback in the dependencies) for logging.  Logs important events, errors, and warnings.  This is essential for debugging and monitoring. Configure logback in `logback.xml` in your resources folder. A basic one would look like this:
 
-2.  **Data Classes:**
-    *   `PrimeCheckRequest`:  Represents the incoming request containing the number to check.  It's a Kotlin `data class` and is marked with `@Serializable` so that `kotlinx.serialization` can convert JSON to/from this class.
-    *   `PrimeCheckResponse`: Represents the response containing the original number and whether it's prime.  It's also a `data class` and `@Serializable`.
+    ```xml
+    <configuration>
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
 
-3.  **`main()` Function:**
-    *   `embeddedServer`: Starts the Ktor server using Netty as the engine.  It listens on port 8080 and host "0.0.0.0" (all interfaces).
-    *   `install(ContentNegotiation)`:  Installs the `ContentNegotiation` feature, allowing Ktor to automatically serialize and deserialize JSON. We configure it to use `kotlinx.serialization.json`.
-    *    `install(StatusPages)`: Adds a global exception handler.  Any uncaught `Throwable` will be caught, logged, and a 500 Internal Server Error response will be sent to the client. This helps in providing graceful error handling.
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </configuration>
+    ```
+*   **HTTP Status Codes:**  Uses the correct HTTP status codes for different scenarios:
 
-4.  **`routing` Block:** Defines the API endpoints.
-    *   `get("/")`:  A simple endpoint that returns a welcome message.
-    *   `post("/isPrime")`:
-        *   `call.receive<PrimeCheckRequest>()`:  Reads the request body and deserializes it into a `PrimeCheckRequest` object.  If the JSON is invalid, it will throw an exception, which is caught in the `catch` block.
-        *   Input validation: Check if the number is negative and returns a `BadRequest` if so.
-        *   Calls the `isPrime()` function to check if the number is prime.
-        *   Creates a `PrimeCheckResponse` object and sends it back to the client as JSON.
-        *   Error Handling: A `try...catch` block handles potential exceptions during request processing.  If an exception occurs, a `BadRequest` status code is returned with an error message.
-    *    `get("/isPrime/{number}")`:  This is a GET endpoint that takes the number as a path parameter.
-        *   `call.parameters["number"]`: Gets the number from the URL path.
-        *   Uses a `try...catch` block to handle potential errors like missing or invalid number parameters.
-        *   Returns a `PrimeCheckResponse` object as JSON.
+    *   200 OK: Successful GET, PUT
+    *   201 Created: Successful POST
+    *   204 No Content: Successful DELETE
+    *   400 Bad Request: Invalid input data
+    *   404 Not Found: Resource not found
+    *   409 Conflict: Resource already exists (duplicate ID)
+    *   500 Internal Server Error: Unexpected server-side error
+*   **`ignoreUnknownKeys = true`:** Added to the JSON configuration.  This is *very* important for API evolution.  It allows clients to send extra fields in the JSON that the server doesn't understand without causing an error.  This makes it easier to add new fields to your `Product` data class in the future without breaking existing clients.  Without this, adding a new field to `Product` would require *all* clients to update their code at the same time.
+*   **Consistent ID Handling:**  The PUT method now checks if the ID in the URL path matches the ID in the request body.  This is a common best practice to prevent accidental updates to the wrong resource.
+*    **Use `removeIf`**: The DELETE now uses `removeIf` and checks the return value. This prevents accidental 500s if the ID isn't found.
+*   **Clearer Error Messages:**  Provides more informative error messages in the responses, making it easier for clients to understand what went wrong.
+*   **ContentTransformationException Handling:** Catching this specific exception allows for more targeted handling of JSON parsing errors. This makes debugging easier.
+*   **More Robust Exception Handling:** Catches more general exceptions (e.g., `Exception` in POST and PUT) and responds with a 500 Internal Server Error. This prevents the server from crashing due to unexpected errors.
+*    **ID Format Validation:** Added input validation on the ID parameter, verifying the ID to be an Int, and returns an appropriate error.
 
-5.  **`isPrime()` Function:** The same prime number checking function you provided.
+To adapt this to `Book`, `Student`, or `Movie`, simply change the data class, the list name, and the route paths as described in the previous response.  The core logic and error handling will remain the same. Remember to adjust any validation rules specific to the new data class (e.g., validate the `grade` field in the `Student` data class).
 
-**How to Run:**
-
-1.  **Build the project:** Use Gradle to build the project (e.g., `./gradlew build`).
-2.  **Run the application:**  Run the generated JAR file (e.g., `java -jar build/libs/your-project-name.jar`).  You can also run it from your IDE.
-
-**How to Test (using curl):**
-
-*   **POST Request:**
-
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{"number": 17}' http://localhost:8080/isPrime
-```
-
-Expected Response:
-
-```json
-{"number":17,"isPrime":true}
-```
-
-*   **GET Request:**
-
-```bash
-curl http://localhost:8080/isPrime/23
-```
-
-Expected Response:
-
-```json
-{"number":23,"isPrime":true}
-```
-
-*   **Error Handling:**
-    *   Invalid JSON (POST):
-
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{"number": "abc"}' http://localhost:8080/isPrime
-```
-
-Response (status code 400): `Invalid request format or missing 'number' field.`
-
-    *   Negative Number (GET):
-
-```bash
-curl http://localhost:8080/isPrime/-5
-```
-
-Response (status code 400): `Number must be non-negative.`
-
-**Key Improvements and Best Practices:**
-
-*   **Content Negotiation:** Uses `ContentNegotiation` to automatically handle JSON serialization/deserialization, making the code cleaner.
-*   **Data Classes:** Uses Kotlin data classes to represent the request and response, providing a concise and type-safe way to work with data.
-*   **Error Handling:**  Includes `try...catch` blocks to handle potential exceptions and return appropriate HTTP status codes (e.g., 400 Bad Request, 500 Internal Server Error).
-*   **HTTP Status Codes:**  Returns meaningful HTTP status codes to indicate the success or failure of the request.
-*   **Input Validation:**  Validates the input to ensure that it's within the expected range (non-negative numbers).
-*   **Separate GET and POST:** Uses separate endpoints for GET (with a path parameter) and POST (with a request body) to provide flexibility in how clients can interact with the API.
-*   **GET with Path Parameter:** The `GET /isPrime/{number}` endpoint demonstrates how to use path parameters in Ktor.
-*   **Status Pages:** Installs the `StatusPages` plugin to provide a global exception handler.
-
-This example provides a solid foundation for building REST APIs with Kotlin and Ktor, including best practices for data handling, error handling, and API design. Remember to adapt the code and add more features to meet your specific requirements.
+This complete example provides a solid foundation for building REST APIs with Ktor and Kotlin.  Remember to replace the in-memory data store with a database for production use.  Also, implement authentication and authorization for security.

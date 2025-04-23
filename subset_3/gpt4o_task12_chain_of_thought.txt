@@ -1,0 +1,52 @@
+There's a small bug in your `factorial` function related to the calculation of factorial for the input `0`. The factorial of 0 is defined as 1. However, your loop runs from `1` to `n-1`, and due to this, the function doesn't work correctly for `n = 0`. Let's fix it step by step:
+
+### Step 1: Identify the Problem
+Your current function signature is:
+```python
+def factorial(n):
+    result = 1
+    for i in range(1, n):
+        result *= i
+    return result
+```
+
+- When `n = 0`, the range in the `for` loop becomes `range(1, 0)`, which is an empty range. Therefore, the loop never executes, and `result` stays `1`. This would actually yield the correct result, but there's another issue.
+- The loop should include `n`, so when `n` is greater than 1, it doesn't calculate the correct factorial value.
+
+### Step 2: Correct the Loop Range
+The `range` should include `n` as the upper bound (exclusive), meaning it should go from `1` to `n` inclusive. We should use `range(1, n + 1)`:
+
+```python
+def factorial(n):
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+```
+
+### Step 3: Handle the Edge Case for Zero
+Although our current logic should return `1` for `n = 0` due to initializing `result` to 1 and not entering the loop at all, we can make it explicit to handle `n = 0`:
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+```
+
+### Step 4: Test the Function
+Now, test your function for a few cases to ensure correctness:
+
+```python
+print(factorial(0))  # Output: 1
+print(factorial(1))  # Output: 1
+print(factorial(2))  # Output: 2
+print(factorial(3))  # Output: 6
+print(factorial(4))  # Output: 24
+print(factorial(5))  # Output: 120
+```
+
+This should correctly compute the factorial for all non-negative integers.

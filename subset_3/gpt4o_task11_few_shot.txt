@@ -1,0 +1,35 @@
+To generate the specific Python code you've provided, you could use the following prompt:
+
+---
+
+Create a Python module that solves the following prime number-related problems using an `is_prime` function.
+
+1. **Find the First N Prime Numbers:**
+
+   Implement a function `find_first_n_primes(n)` that returns a list of the first `n` prime numbers. Make use of the `is_prime` helper function to check each number for primality.
+
+2. **Prime Factorization:**
+
+   Implement a function `prime_factorization(n)` that returns a list of the prime factors of a given integer `n` (where `n > 1`). The list should be in ascending order and include the correct number of repetitions for each prime factor. Use the `is_prime` helper function to identify prime numbers.
+
+3. **Prime Number Range:**
+
+   Implement a function `prime_range(start, end)` that returns a list of all prime numbers within the inclusive range from `start` to `end`. If `start` is greater than `end`, the function should return an empty list. Again, use the `is_prime` helper function to check for primality.
+
+Include the following `is_prime` function in your code for identifying prime numbers:
+
+```python
+def is_prime(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+```
+
+Your implementation should accurately solve each problem and provide the necessary functionality as described.
+
+--- 
+
+This prompt directs the user to implement three distinct problems related to prime numbers, ensuring they use the provided `is_prime` function as a helper method.

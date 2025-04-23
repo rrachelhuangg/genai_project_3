@@ -1,1 +1,33 @@
- The C++ function provided does not appear to be relevant to the problems described in the prompt. It seems to be a script for processing text files, which is different from finding prime numbers or their factors. 
+ The function `getArray` in your example has a similar problem as the other examples you provided. It creates a local array of `size` integers and then returns a pointer to the first element of the array. However, when the function returns, the array goes out of scope and is deallocated, leaving the returned pointer pointing to invalid memory.
+
+To fix this issue, consider allocating the array dynamically using `malloc`. Here's an example of how you can modify the function:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int * getArray (int size ) {
+    int * arr = (int *) malloc(size * sizeof(int));
+    if (!arr) {
+        perror("malloc failed");
+        return NULL;
+    }
+    for (int i = 0; i < size; ++i) {
+        arr[i] = i; // Initialize the array elements.
+    }
+    return arr;
+}
+
+int main() {
+    int *arr = getArray(5);
+    if (!arr) {
+        printf("Error allocating memory.\n");
+        return 1;
+    }
+    free(arr);
+    for (int i = 0; i < 5; ++i) {
+        printf("%d ", arr[i]);
+    }
+    return 0;
+}
+```
+In this modified function, we allocate the array dynamically using `malloc`. We then initialize the elements of the array and return a pointer to the first element. In the `main` function, we check if the allocation was successful and free the memory when we're done with it. 

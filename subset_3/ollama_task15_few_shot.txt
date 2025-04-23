@@ -1,0 +1,16 @@
+ ```python
+class Contact:
+    def __init__(self, name, phone_number, address, age=None, email=None):
+        self.name = name
+        self.age = age
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
+
+# Example usage:
+contact1 = Contact("John Doe", "123-456-7890", "123 Main St, Anytown USA")
+contact2 = Contact("Jane Smith", "555-555-5555", "456 Elm St, Springfield", age=35, email="jane.smith@example.com")
+
+print(f"Contact Name: {contact1.name}, Age: {contact1.age}, Email: {contact1.email}, Phone Number: {contact1.phone_number}, Address: {contact1.address}")
+print(f"Contact Name: {contact2.name}, Age: {contact2.age}, Email: {contact2.email}, Phone Number: {contact2.phone_number}, Address: {contact2.address}")
+``` 

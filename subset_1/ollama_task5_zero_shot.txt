@@ -1,12 +1,17 @@
- import flask
-from flask import Flask, jsonify
+ To create the endpoint `/greet/{username}` that returns a JSON greeting, you can use the following code:
 ```python
+from flask import Flask, jsonify
+
 app = Flask(__name__)
 
 @app.route('/greet/<username>')
 def greet(username):
-    return jsonify({'message': f"Hello {username}!"})
+    # Create the greeting message with the user's name
+    greeting = f"Hello {username}, nice to meet you!"
+    
+    # Return a JSON response with the greeting message
+    return jsonify({'greeting': greeting})
+```
+In this code, we import the `Flask` and `jsonify` modules from Flask. We create an instance of the `Flask` class with the name of the current module as its argument (`__name__`). Then we define a route for the endpoint `/greet/{username}` using the `@app.route` decorator.
 
-if __name__ == '__main__':
-    app.run()
-``` 
+Inside the `greet` function, we create a greeting message using an f-string that includes the user's name passed as an argument (`username`). Finally, we use the `jsonify` function to convert the greeting message into a JSON object with a single key called "greeting", and return it as a response. 

@@ -5,87 +5,46 @@ app = Flask(__name__)
 
 @app.route('/greet/<username>')
 def greet(username):
-    """
-    Greets the user with a personalized message.
-
-    Args:
-        username (str): The name of the user to greet.
-
-    Returns:
-        JSON: A JSON object containing the greeting message.
-    """
-    greeting = f"Hello, {username}!"
-    return jsonify({'greeting': greeting})
+    return jsonify({'message': f'Hello, {username}!'})
 
 if __name__ == '__main__':
-    app.run(debug=True) # Enable debug mode for development
+    app.run(debug=True)
 ```
 
-Key improvements and explanations:
+**Explanation:**
 
-* **`from flask import Flask, jsonify`**:  Crucially imports `jsonify` to convert the Python dictionary into a JSON response.  Without this, you'd likely get a `TypeError` from Flask.
+1. **Import necessary modules:**
+   - `Flask` is imported to create the Flask application.
+   - `jsonify` is imported to convert Python dictionaries into JSON responses.
 
-* **`app = Flask(__name__)`**: Standard Flask application initialization.
+2. **Create a Flask app:**
+   - `app = Flask(__name__)` creates an instance of the Flask class, which represents your web application.  `__name__` is a special Python variable that represents the name of the current module.  It's used by Flask to find resources relative to your script.
 
-* **`@app.route('/greet/<username>')`**:  Correctly defines the route with the `<username>` variable part.  This is how Flask captures the username from the URL.
+3. **Define the route:**
+   - `@app.route('/greet/<username>')` is a decorator that associates the URL path `/greet/<username>` with the `greet` function.
+   - `<username>` is a route parameter.  It's a variable part of the URL that will be passed as an argument to the `greet` function. By default, route parameters are treated as strings.
 
-* **`def greet(username):`**: Defines the function to handle the route. The `username` parameter automatically receives the value from the URL.
+4. **Define the view function (greet):**
+   - `def greet(username):` defines the function that will be executed when a user visits the `/greet/<username>` route.  It takes the `username` from the URL as an argument.
+   - `return jsonify({'message': f'Hello, {username}!'})` creates the JSON response:
+     - `f'Hello, {username}!'` is an f-string (formatted string literal) that inserts the value of the `username` variable into the string.
+     - `{'message': ...}` creates a Python dictionary where the key is "message" and the value is the greeting string.
+     - `jsonify(...)` converts the Python dictionary into a JSON response, which is what Flask sends back to the client (browser).
 
-* **`greeting = f"Hello, {username}!"`**: Uses an f-string (formatted string literal) for concise string formatting.
+5. **Run the app:**
+   - `if __name__ == '__main__':` is a standard Python idiom that ensures the following code is only executed when the script is run directly (not when it's imported as a module).
+   - `app.run(debug=True)` starts the Flask development server.
+     - `debug=True` enables debugging mode, which provides helpful error messages and automatically reloads the server when you make changes to the code.  **Important:**  Do not use `debug=True` in a production environment.
 
-* **`return jsonify({'greeting': greeting})`**:  **This is the most important part.**  `jsonify` takes a dictionary as input and converts it to a JSON response with the correct `Content-Type` header ( `application/json` ). This tells the browser or client that the response is JSON data.
-
-* **`if __name__ == '__main__':`**:  This ensures the Flask development server only starts when you run the script directly (not when it's imported as a module).
-
-* **`app.run(debug=True)`**:  Starts the Flask development server. `debug=True` enables the debugger, which is very helpful during development.  **Do not use `debug=True` in production!**
-
-**How to Run:**
+**How to run and test:**
 
 1.  **Save:** Save the code as a Python file (e.g., `app.py`).
-2.  **Install Flask:** If you don't have it, install Flask:
-    ```bash
-    pip install Flask
-    ```
-3.  **Run the app:** Open a terminal, navigate to the directory where you saved the file, and run:
-    ```bash
-    python app.py
-    ```
+2.  **Install Flask:**  If you don't have Flask installed, run:  `pip install Flask`
+3.  **Run:** Open a terminal, navigate to the directory where you saved the file, and run: `python app.py`
+4.  **Test:** Open your web browser and go to `http://127.0.0.1:5000/greet/YourName` (replace `YourName` with an actual name). You should see a JSON response like:
 
-This will start the Flask development server. You'll see output like:
-
-```
- * Serving Flask app 'app'
- * Debug mode: on
- * Running on http://127.0.0.1:5000
- * Click Ctrl+C to quit
-```
-
-**How to Test:**
-
-Open your web browser (or use `curl` or `Postman`) and go to the following URL:
-
-*   `http://127.0.0.1:5000/greet/Alice`
-
-You should see the following JSON response in your browser:
-
-```json
-{
-  "greeting": "Hello, Alice!"
-}
-```
-
-Test with other usernames to verify it's working correctly.
-
-**Example using `curl`:**
-
-```bash
-curl http://127.0.0.1:5000/greet/Bob
-```
-
-Output:
-
-```json
-{
-  "greeting": "Hello, Bob!"
-}
-```
+   ```json
+   {
+       "message": "Hello, YourName!"
+   }
+   ```
