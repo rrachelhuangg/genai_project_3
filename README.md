@@ -31,7 +31,7 @@ Cosine-vector similarity analysis was applied to the CodeT5 embeddings of the ab
 ## Testing
 * `git clone https://github.com/rrachelhuangg/genai_project_3.git`
 * `cd genai_project_3`
-* Can run `python pipe_1.py` for a demo of the testing and results extraction to subset_1 directory. 
+* Can run `python pipe_1.py` for a demo of the testing and results extraction to subset_1 directory. (Note: have to set up api key(s) and modify directory structures slightly to run scripts) 
 
 ## Viewing Results Report/Datasets
 The requirements of the PDF report are satisfies by this ReadME, `Results_Report.xslx`, and `Rachel Huang GenAI Project 3 Comparisons of Models and Prompting Techniques Writeup.pdf.`
