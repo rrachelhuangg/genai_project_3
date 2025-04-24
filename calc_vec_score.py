@@ -7,8 +7,6 @@ import torch.nn.functional as F
 
 df = pd.read_excel('Results_Report.xlsx')
 
-openai.api_key = "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"
-
 def call_gpt4o(code1, code2):
     response = openai.chat.completions.create(
         model="gpt-4o",
