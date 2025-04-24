@@ -31,10 +31,8 @@ Cosine-vector similarity analysis was applied to the CodeT5 embeddings of the ab
 ## Testing
 * `git clone https://github.com/rrachelhuangg/genai_project_3.git`
 * `cd genai_project_3`
-* `python -m venv .venv`
-* `source .venv/bin/activate`
-* `pip install requirements.txt`
 * Can run `python pipe_1.py` for a demo of the testing and results extraction to subset_1 directory. 
 
 ## Viewing Results Report/Datasets
-`Results_Report.xslx` contains all of the prompts used, with the corresponding combinations of strategies and models applied to each of the 22 tasks. A written analysis of each task's result is also included in the `Analysis` column of the spreadsheet. [written report, etc.]
+The requirements of the PDF report are satisfies by this ReadME, `Results_Report.xslx`, and ``Rachel Huang GenAI Project 3 Comparisons of Models and Prompting Techniques Writeup.pdf.`
+`Results_Report.xslx` contains all of the prompts used, with the corresponding combinations of strategies and models applied to each of the 22 tasks. A written analysis of each task's result is also included in the `Analysis` column of the spreadsheet. `Rachel Huang GenAI Project 3 Comparisons of Models and Prompting Techniques Writeup.pdf` contains a written report analyzing the responses of the models used and the prompting strategies used. 
