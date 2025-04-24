@@ -2,7 +2,6 @@ import os
 import json
 from mistralai import Mistral
 
-api_key = "CM9L45tyGDIXU04Y3Ewjha2JNILCd1As"
 model = "mistral-large-latest"
 
 client = Mistral(api_key=api_key)
