@@ -1,38 +1,282 @@
-PROBLEM 18 
-Certainly! Here is the completed Python function `calculate_average` based on the intent to calculate the average of a list of numerical scores:
+PROBLEM 22 
+Certainly! Below is the completed script with the necessary changes to clean each line, remove punctuation, and count word frequencies correctly.
 
 ```python
-def calculate_average(scores):
-    if not scores:  # Check if the list is empty
-        return 0  # Return 0 if there are no scores to avoid division by zero
+# file_processor.py - Complete script for processing text files
 
-    total = sum(scores)  # Calculate the sum of all scores
-    average = total / len(scores)  # Calculate the average
-    return average  # Return the calculated average
+import string
+
+def load_file(filepath):
+    with open(filepath, 'r') as f:
+        return f.readlines()
+
+def clean_line(line):
+    # Remove punctuation and make lowercase
+    translator = str.maketrans('', '', string.punctuation)
+    return line.translate(translator).lower()
+
+def count_words(lines):
+    word_counts = {}
+    for line in lines:
+        clean = clean_line(line)
+        for word in clean.split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
+def main():
+    filepath = 'input.txt'
+    lines = load_file(filepath)
+    counts = count_words(lines)
+    for word, count in sorted(counts.items()):
+        print(f"{word}: {count}")
+
+if __name__ == '__main__':
+    main()
 ```
 
-This function does the following:
-1. Checks if the `scores` list is empty. If it is, the function returns 0 to avoid division by zero.
-2. Computes the sum of all the scores using the `sum` function.
-3. Calculates the average by dividing the total sum by the number of scores (the length of the `scores` list).
-4. Returns the calculated average.
+### Explanation:
+1. **Importing the `string` module**: This is used to get a list of punctuation characters.
+2. **`load_file` function**: Reads the file and returns a list of lines.
+3. **`clean_line` function**:
+   - Uses `str.maketrans` to create a translation table that maps each punctuation character to `None`.
+   - Uses `str.translate` to remove punctuation from the line.
+   - Converts the line to lowercase using `str.lower`.
+4. **`count_words` function**:
+   - Initializes an empty dictionary `word_counts` to store word frequencies.
+   - Iterates over each line, cleans it, and splits it into words.
+   - Updates the word counts in the dictionary.
+5. **`main` function**:
+   - Specifies the file path.
+   - Loads the file content.
+   - Counts the word frequencies.
+   - Prints the word frequencies in sorted order.
 
-You can test the function with different input lists to ensure it works correctly:
+This script will read a text file named `input.txt`, clean each line by removing punctuation and converting it to lowercase, count the frequency of each word, and print the word frequencies in alphabetical order.Sure, let's complete the script step by step.
+
+1. **Remove punctuation and make lowercase in `clean_line` function.**
+2. **Fix the indentation and iteration in the `count_words` function.**
+
+Here's the complete script:
 
 ```python
-# Example usage:
-scores = [85, 90, 92, 88, 95]
-average = calculate_average(scores)
-print(f"The average score is: {average}")
+# file_processor.py - Complete script for processing text files
 
-# Test with an empty list:
-empty_scores = []
-empty_average = calculate_average(empty_scores)
-print(f"The average score for an empty list is: {empty_average}")
+import string
+
+def load_file(filepath):
+    with open(filepath, 'r') as f:
+        return f.readlines()
+
+def clean_line(line):
+    # Remove punctuation and make lowercase
+    translator = str.maketrans('', '', string.punctuation)
+    return line.translate(translator).lower()
+
+def count_words(lines):
+    word_counts = {}
+    for line in lines:
+        clean = clean_line(line)
+        for word in clean.split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
+def main():
+    filepath = 'input.txt'
+    lines = load_file(filepath)
+    counts = count_words(lines)
+    for word, count in sorted(counts.items()):
+        print(f"{word}: {count}")
+
+if __name__ == '__main__':
+    main()
 ```
 
-This will output:
+### Explanation:
+1. **`load_file` Function**:
+   - Opens the file in read mode and returns all lines as a list of strings.
+
+2. **`clean_line` Function**:
+   - Uses `str.maketrans` to create a translation table that maps each punctuation character to `None`.
+   - Applies the translation table to the line using `translate`, which removes all punctuation.
+   - Converts the line to lowercase using `lower`.
+
+3. **`count_words` Function**:
+   - Initializes an empty dictionary `word_counts`.
+   - Iterates over each line, cleans it using `clean_line`, and splits the cleaned line into words.
+   - For each word, updates the word count in the dictionary.
+
+4. **`main` Function**:
+   - Sets the file path to `input.txt`.
+   - Loads the file lines using `load_file`.
+   - Counts the word frequencies using `count_words`.
+   - Prints each word and its count in a sorted manner.
+
+### Usage:
+- Ensure you have an `input.txt` file in the same directory as the script.
+- Run the script, and it will print the word frequencies from the `input.txt` file.
+
+This script should now correctly clean each line, remove punctuation, and count word frequencies.Certainly! I'll complete the script by implementing the `clean_line` function to remove punctuation and make each line lowercase. Here's the completed script:
+
+```python
+# file_processor.py - Script for processing text files
+
+import string
+
+def load_file(filepath):
+    with open(filepath, 'r') as f:
+        return f.readlines()
+
+def clean_line(line):
+    # Remove punctuation and make lowercase
+    translator = str.maketrans('', '', string.punctuation)
+    cleaned_line = line.translate(translator).lower()
+    return cleaned_line
+
+def count_words(lines):
+    word_counts = {}
+    for line in lines:
+        clean = clean_line(line)
+        for word in clean.split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
+def main():
+    filepath = 'input.txt'
+    lines = load_file(filepath)
+    counts = count_words(lines)
+    for word, count in sorted(counts.items()):
+        print(f"{word}: {count}")
+
+if __name__ == '__main__':
+    main()
 ```
-The average score is: 90.0
-The average score for an empty list is: 0
+
+### Explanation:
+1. **`load_file(filepath)`**: This function reads all lines from the specified file and returns them as a list.
+2. **`clean_line(line)`**: This function removes punctuation from the line using `str.translate` and converts the line to lowercase.
+3. **`count_words(lines)`**: This function processes each line, cleans it, splits it into words, and counts the frequency of each word.
+4. **`main()`**: This function orchestrates the process by loading the file, counting the words, and printing the sorted word counts.
+
+### How to Run:
+1. Make sure you have an `input.txt` file in the same directory as the script.
+2. Run the script using Python:
+   ```sh
+   python file_processor.py
+   ```
+
+This will read the `input.txt` file, clean each line, count the word frequencies, and print them in sorted order.Sure! Let's complete the script by implementing the `clean_line` function to remove punctuation and convert the text to lowercase. We'll also ensure that the `count_words` function processes each line correctly.
+
+Here's the completed script:
+
+```python
+# file_processor.py - Script for processing text files
+
+import string
+
+def load_file(filepath):
+    with open(filepath, 'r') as f:
+        return f.readlines()
+
+def clean_line(line):
+    # Remove punctuation and make lowercase
+    translator = str.maketrans('', '', string.punctuation)
+    return line.translate(translator).lower()
+
+def count_words(lines):
+    word_counts = {}
+    for line in lines:
+        clean = clean_line(line)
+        for word in clean.split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
+def main():
+    filepath = 'input.txt'
+    lines = load_file(filepath)
+    counts = count_words(lines)
+    for word, count in sorted(counts.items()):
+        print(f"{word}: {count}")
+
+if __name__ == '__main__':
+    main()
 ```
+
+### Explanation:
+
+1. **Importing `string` Module**: This module provides a string of all punctuation characters, which will be used to remove punctuation from the text.
+
+2. **`load_file` Function**: This function reads all lines from the specified file and returns them as a list.
+
+3. **`clean_line` Function**:
+    - **Removing Punctuation**: We create a translation table using `str.maketrans` that maps each punctuation character to `None`. This table is then used with the `translate` method to remove all punctuation from the line.
+    - **Lowercase Conversion**: The `lower` method converts the entire line to lowercase.
+
+4. **`count_words` Function**:
+    - **Processing Each Line**: Each line is cleaned using the `clean_line` function.
+    - **Splitting into Words**: The cleaned line is split into individual words.
+    - **Counting Words**: Each word is counted using a dictionary. If the word is already in the dictionary, its count is incremented; otherwise, it is added with a count of 1.
+
+5. **`main` Function**: This function reads the file, counts the word frequencies, and prints the sorted results.
+
+6. **Entry Point**: The `if __name__ == '__main__':` block ensures that the `main` function is called when the script is run directly.
+
+This script will read `input.txt`, clean each line, count the word frequencies, and print the results sorted alphabetically.Certainly! Let's complete the script by implementing the `clean_line` function to remove punctuation and convert the text to lowercase. Additionally, I will correct some minor issues in the provided script.
+
+Here is the complete script:
+
+```python
+# file_processor.py - Script for processing text files
+
+import string
+
+def load_file(filepath):
+    with open(filepath, 'r') as f:
+        return f.readlines()
+
+def clean_line(line):
+    # Remove punctuation and make lowercase
+    translator = str.maketrans('', '', string.punctuation)
+    return line.translate(translator).lower()
+
+def count_words(lines):
+    word_counts = {}
+    for line in lines:
+        clean = clean_line(line)
+        for word in clean.split():
+            word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
+def main():
+    filepath = 'input.txt'
+    lines = load_file(filepath)
+    counts = count_words(lines)
+    for word, count in sorted(counts.items()):
+        print(f"{word}: {count}")
+
+if __name__ == '__main__':
+    main()
+```
+
+### Explanation:
+1. **`load_file` function**:
+   - Reads the contents of a file and returns a list of lines.
+
+2. **`clean_line` function**:
+   - Creates a translation table to remove punctuation using `str.maketrans`.
+   - Translates the line to remove punctuation and converts it to lowercase.
+
+3. **`count_words` function**:
+   - Initializes an empty dictionary `word_counts`.
+   - Iterates over each line, cleans it, splits it into words, and updates the word counts in the dictionary.
+
+4. **`main` function**:
+   - Specifies the file path.
+   - Loads the file contents.
+   - Counts the word frequencies.
+   - Prints the word counts in alphabetical order.
+
+### Usage:
+- Ensure you have a file named `input.txt` in the same directory as the script.
+- Run the script to see the word frequencies from the file.
+
+This script will read the contents of `input.txt`, clean each line by removing punctuation and converting to lowercase, count the word frequencies, and print them in alphabetical order.

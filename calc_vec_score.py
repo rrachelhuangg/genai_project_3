@@ -1,6 +1,23 @@
 import pandas as pd
+import openai
+from sentence_transformers import SentenceTransformer, util
+import torch
+from transformers import AutoModel, AutoTokenizer
+import torch.nn.functional as F
 
-df = pd.read_excel('GenAI_Project_3_Results.xlsx')
+df = pd.read_excel('Results_Report.xlsx')
+
+openai.api_key = "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"
+
+def call_gpt4o(code1, code2):
+    response = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a code analyst."},
+            {"role": "user", "content": f"Analyze the accuracy and similarities/differences of these two snippets in two concise sentences. Don't include redundant or contradictory information. {code1} and {code2}"}
+        ]
+    )
+    return response.choices[0].message.content
 
 i = 0
 model_1_results = []
@@ -20,19 +37,34 @@ for col in df.columns:
     elif 'Model2' in col and i == 0:
         i += 1
 
-model_1_results = model_1_results[:30]
-model_2_results = model_2_results[:30]
+model_1_results = model_1_results[56:]
+model_2_results = model_2_results[56:]
+length = len(model_1_results)
 
-from sentence_transformers import SentenceTransformer, util
-import torch
+checkpoint = "Salesforce/codet5p-110m-embedding"
+device = "cpu"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint, trust_remote_code=True)
+model = AutoModel.from_pretrained(checkpoint, trust_remote_code=True).to(device)
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+def get_embedding(text):
+    if not text or not isinstance(text, str) or text.strip() == "":
+        return torch.zeros(model.config.hidden_size)
 
-model_1_embeddings = model.encode(model_1_results, convert_to_tensor=True)
-model_2_embeddings = model.encode(model_2_results, convert_to_tensor=True)
-cosine_scores = util.cos_sim(model_1_embeddings, model_2_embeddings)
-similarity_scores = torch.diag(cosine_scores)
-scores_list = similarity_scores.tolist()
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True).to(device)
+    with torch.no_grad():
+        last_hidden_state = model(**inputs)[0]
+    
+    if last_hidden_state.ndim == 3:
+        embedding = last_hidden_state.mean(dim=1)
+    else:
+        embedding = last_hidden_state
+    
+    return embedding.squeeze()
 
+model_1_embeddings = torch.stack([get_embedding(text) for text in model_1_results])
+model_2_embeddings = torch.stack([get_embedding(text) for text in model_2_results])
+
+cosine_scores = F.cosine_similarity(model_1_embeddings, model_2_embeddings)
+scores_list = cosine_scores.tolist()
 for i, score in enumerate(scores_list):
     print(f"Entries {i} with similarity score of {score:.6f}")

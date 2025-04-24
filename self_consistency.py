@@ -17,10 +17,6 @@ with open("zero_shot_prompts.json", "r") as file:
     zero_shot_prompts = json.load(file)
 for key in range(22, 23):
     prompt = zero_shot_prompts[str(key)]
-    context = ""
-    with open("prompt_chaining_prompts/16.txt", "r") as file:
-        context = file.read()
-    print("PROMPT: ", prompt)
     snippet = ""
     for f in files:
         if int(f[f.find("k")+1:f.find(".")]) == key:
@@ -28,6 +24,7 @@ for key in range(22, 23):
             print("FILE: ", f"tasks_code/{f}")
             with open(f"tasks_code/{f}", "r") as file:
                 snippet = file.read()
-            with open(output_file, "w") as file:
+            with open(output_file, "a") as file:
                 file.write(f"PROBLEM {key} \n")
-                file.write(call_gemini(prompt,snippet))
+                for i in range(5):
+                    file.write(call_gemini(prompt, snippet))
