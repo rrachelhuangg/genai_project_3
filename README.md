@@ -36,3 +36,5 @@ Cosine-vector similarity analysis was applied to the CodeT5 embeddings of the ab
 ## Viewing Results Report/Datasets
 The requirements of the PDF report are satisfies by this ReadME, `Results_Report.xslx`, and ``Rachel Huang GenAI Project 3 Comparisons of Models and Prompting Techniques Writeup.pdf.`
 `Results_Report.xslx` contains all of the prompts used, with the corresponding combinations of strategies and models applied to each of the 22 tasks. A written analysis of each task's result is also included in the `Analysis` column of the spreadsheet. `Rachel Huang GenAI Project 3 Comparisons of Models and Prompting Techniques Writeup.pdf` contains a written report analyzing the responses of the models used and the prompting strategies used. 
+
+**Note**: Rows 32-57 (inclusive) in `Results_Report.xslx` have slightly different formatting than the rest of the spreadsheet, because each step of the prompt chaining process was put on a separate row. The analysis and vector embedding score calculation for each of these parts is marked with the respective row numbers at the end of each strategy/model combo for a task. 
