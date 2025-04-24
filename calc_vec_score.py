@@ -6,6 +6,7 @@ from transformers import AutoModel, AutoTokenizer
 import torch.nn.functional as F
 
 df = pd.read_excel('Results_Report.xlsx')
+openai.api_key = ""
 
 def call_gpt4o(code1, code2):
     response = openai.chat.completions.create(
