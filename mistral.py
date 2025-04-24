@@ -3,7 +3,7 @@ import json
 from mistralai import Mistral
 
 model = "mistral-large-latest"
-
+api_key = ""
 client = Mistral(api_key=api_key)
 
 def call_mistral(prompt, code):
