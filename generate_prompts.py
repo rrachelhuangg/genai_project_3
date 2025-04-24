@@ -2,6 +2,7 @@ from google import genai
 import json
 import os
 
+client = genai.Client(api_key="")
 output_file = "output.txt"
 
 def call_gemini(prompt, code):
