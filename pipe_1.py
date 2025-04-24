@@ -6,7 +6,7 @@ import ollama
 ollama_model = "llava:7b-v1.6"
 
 subset_1_output_dir = "subset_1"
-client = genai.Client(api_key="AIzaSyDDK-2nQscZir1LCJ6R-CTDgBg2NIs0Qw0")
+client = genai.Client(api_key="")
 
 def call_gemini(prompt, code):
     response = client.models.generate_content(
